@@ -114,7 +114,7 @@ app.route('/item')
                     });
                 } else {
                     response.status(400).send({
-                        success: true,
+                        success: false,
                         message: 'No data on this page',
                         pageInfo
                     });
@@ -161,6 +161,57 @@ app.route('/item/:id')
                     });
                 }
             });
+        } else {
+            response.status(400).send({
+                success: false,
+                message: 'Invalid or bad ID'
+            });
+        }
+    })
+    // PUT method on path '/item/{id}' to update data with ID key on items table
+    .put((request, response) => {
+        let {
+            id
+        } = request.params;
+        id = Number(id);
+
+        let {
+            name,
+            price,
+            description
+        } = request.body;
+
+        if (typeof id === 'number' && !isNaN(id)) {
+            if (name && price && description) {
+                db.query(`update items set name = '${name}', price = ${price}, description = '${description}' where id = '${id}'`, (error, result, fields) => {
+                    if (!error) {
+                        if (result.affectedRows) {
+                            response.send({
+                                success: true,
+                                message: 'Update item success!',
+                                data: result,
+                            });
+                        } else {
+                            response.status(400).send({
+                                success: false,
+                                message: 'Update failed! ID not found',
+                                data: result,
+                            });
+                        }
+                    } else {
+                        console.log(error.message);
+                        response.status(500).send({
+                            success: false,
+                            message: 'Connection refuse'
+                        });
+                    }
+                });
+            } else {
+                response.status(400).send({
+                    success: false,
+                    message: 'Update failed! Incomplete key & value'
+                });
+            }
         } else {
             response.status(400).send({
                 success: false,
