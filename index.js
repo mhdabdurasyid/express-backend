@@ -257,6 +257,52 @@ app.route('/item/:id')
             });
         }
     })
+    // PATCH method on path '/item/{id}' to update data partially with ID key on items table
+    .patch((request, response) => {
+        let {
+            id
+        } = request.params;
+        id = Number(id);
+
+        if (typeof id === 'number' && !isNaN(id)) {
+            const patch_query = Object.entries(request.body).map(el => {
+                if (Number(el[1])) {
+                    return `${el[0]} = ${el[1]}`;
+                } else {
+                    return `${el[0]} = '${el[1]}'`
+                }
+            }).join(', ');
+
+            db.query(`update items set ${patch_query} where id = '${id}'`, (error, result, fields) => {
+                if (!error) {
+                    if (result.affectedRows) {
+                        response.send({
+                            success: true,
+                            message: 'Update item success!',
+                            data: result,
+                        });
+                    } else {
+                        response.status(400).send({
+                            success: false,
+                            message: 'Update failed! ID not found',
+                            data: result,
+                        });
+                    }
+                } else {
+                    console.log(error.message);
+                    response.status(500).send({
+                        success: false,
+                        message: 'Connection refuse'
+                    });
+                }
+            });
+        } else {
+            response.status(400).send({
+                success: false,
+                message: 'Invalid or bad ID'
+            });
+        }
+    })
 
 // listening on port 8080
 app.listen(8080, () => {
