@@ -130,7 +130,7 @@ app.route('/item')
     })
 
 app.route('/item/:id')
-    // GET method on path '/item/{id}' to get item with ID key
+    // GET method on path '/item/{id}' to get item by ID key
     .get((request, response) => {
         let {
             id
@@ -168,7 +168,7 @@ app.route('/item/:id')
             });
         }
     })
-    // PUT method on path '/item/{id}' to update data with ID key on items table
+    // PUT method on path '/item/{id}' to update data by ID key on items table
     .put((request, response) => {
         let {
             id
@@ -219,7 +219,7 @@ app.route('/item/:id')
             });
         }
     })
-    // DELETE method on path '/item/{id}' to delete data with ID key on items table
+    // DELETE method on path '/item/{id}' to delete data by ID key on items table
     .delete((request, response) => {
         let {
             id
@@ -257,7 +257,7 @@ app.route('/item/:id')
             });
         }
     })
-    // PATCH method on path '/item/{id}' to update data partially with ID key on items table
+    // PATCH method on path '/item/{id}' to update data partially by ID key on items table
     .patch((request, response) => {
         let {
             id
