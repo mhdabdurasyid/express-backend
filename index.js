@@ -113,7 +113,7 @@ app.route('/item')
                         });
                     });
                 } else {
-                    response.send({
+                    response.status(400).send({
                         success: true,
                         message: 'No data on this page',
                         pageInfo
@@ -127,6 +127,46 @@ app.route('/item')
                 });
             }
         })
+    })
+
+app.route('/item/:id')
+    // GET method on path '/item/{id}' to get item with ID key
+    .get((request, response) => {
+        let {
+            id
+        } = request.params;
+        id = Number(id);
+
+        if (typeof id === 'number' && !isNaN(id)) {
+            db.query(`select * from items where id = ${id}`, (error, result, fields) => {
+                if (!error) {
+                    if (result.length) {
+                        response.send({
+                            success: true,
+                            message: 'Found an item',
+                            data: result,
+                        });
+                    } else {
+                        response.send({
+                            success: false,
+                            message: 'No item found',
+                            data: result,
+                        });
+                    }
+                } else {
+                    console.log(error.message);
+                    response.status(500).send({
+                        success: false,
+                        message: 'Connection refuse'
+                    });
+                }
+            });
+        } else {
+            response.status(400).send({
+                success: false,
+                message: 'Invalid or bad ID'
+            });
+        }
     })
 
 // listening on port 8080
