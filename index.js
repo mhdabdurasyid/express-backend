@@ -219,6 +219,44 @@ app.route('/item/:id')
             });
         }
     })
+    // DELETE method on path '/item/{id}' to delete data with ID key on items table
+    .delete((request, response) => {
+        let {
+            id
+        } = request.params;
+        id = Number(id);
+
+        if (typeof id === 'number' && !isNaN(id)) {
+            db.query(`delete from items where id = '${id}'`, (error, result, fields) => {
+                if (!error) {
+                    if (result.affectedRows) {
+                        response.send({
+                            success: true,
+                            message: 'Delete item success!',
+                            data: result,
+                        });
+                    } else {
+                        response.status(400).send({
+                            success: false,
+                            message: 'Delete failed! ID not found',
+                            data: result,
+                        });
+                    }
+                } else {
+                    console.log(error.message);
+                    response.status(500).send({
+                        success: false,
+                        message: 'Connection refuse'
+                    });
+                }
+            });
+        } else {
+            response.status(400).send({
+                success: false,
+                message: 'Invalid or bad ID'
+            });
+        }
+    })
 
 // listening on port 8080
 app.listen(8080, () => {
