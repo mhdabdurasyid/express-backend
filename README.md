@@ -29,8 +29,10 @@ Express.js is a web application framework for Node.js. [More about Express](http
 * `/item`(Get All item) 
 * `/item?page=1`
 * `/item?limit=5`
-* `/item?page=1&limit=5`
-* `/item?search=query`
+* `/item?search=query` (Search item by name)
+* `/item?search[description]=query` (Search item by description)
+* `/item?sort=asc` 
+* `/item?sort[price]=asc` (Sort item by price)
 * `/item/{id}`(Get item by ID) 
 
 **2. POST**

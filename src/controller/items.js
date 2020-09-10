@@ -37,10 +37,12 @@ module.exports = {
     }
   },
   getItems: (request, response) => {
-    let { page, limit, search } = request.query
+    let { page, limit, search, sort } = request.query
 
     let searchKey = ''
     let searchValue = ''
+    let sortColumn = ''
+    let sortOption = ''
 
     if (typeof search === 'object') {
       searchKey = Object.keys(search)[0]
@@ -48,6 +50,14 @@ module.exports = {
     } else {
       searchKey = 'name'
       searchValue = search || ''
+    }
+
+    if (typeof sort === 'object') {
+      sortColumn = Object.keys(sort)[0]
+      sortOption = Object.values(sort)[0]
+    } else {
+      sortColumn = 'id'
+      sortOption = sort || ''
     }
 
     if (!limit) {
@@ -62,7 +72,7 @@ module.exports = {
       page = parseInt(page)
     }
 
-    getItemsModel(searchKey, searchValue, page, limit, (error, result) => {
+    getItemsModel(searchKey, searchValue, page, limit, sortColumn, sortOption, (error, result) => {
       if (!error) {
         const pageInfo = {
           count: 0,

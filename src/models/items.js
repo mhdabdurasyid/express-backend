@@ -31,8 +31,8 @@ module.exports = {
       cb(error, result)
     })
   },
-  getItemsModel: (searchKey, searchValue, page, limit, cb) => {
-    db.query(`select * from ${table} where ${searchKey} like '%${searchValue}%' limit ${limit} offset ${(page - 1) * limit}`, (error, result, fields) => {
+  getItemsModel: (searchKey, searchValue, page, limit, sortColumn, sortOption, cb) => {
+    db.query(`select * from ${table} where ${searchKey} like '%${searchValue}%' order by ${sortColumn} ${sortOption} limit ${limit} offset ${(page - 1) * limit}`, (error, result, fields) => {
       cb(error, result)
     })
   },
