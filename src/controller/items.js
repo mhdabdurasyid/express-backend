@@ -197,7 +197,7 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (name.trim() || price.trim() || description.trim()) {
-        const patchData = Object.entries(request.body).map(el => Number(el[1]) ? `${el[0]} = ${el[1]}` : `${el[0]} = '${el[1]}'`).join(', ')
+        const patchData = Object.entries(request.body).map(el => Number(el[1]) ? `${el[0]} = ${el[1]}` : `${el[0]} = '${el[1].replace(/'/gi, "''")}'`).join(', ')
 
         updatePartiallyItemModel(id, patchData, (error, result) => {
           if (!error) {

@@ -10,34 +10,34 @@ module.exports = {
   addItemModel: (data, cb) => {
     const { name, price, description } = data
 
-    db.query(`insert into ${table} (name, price, description) values ('${name}', ${price}, '${description}')`, (error, result, fields) => {
+    db.query(`insert into ${table} (name, price, description) values ('${name.replace(/'/gi, "''")}', ${price}, '${description.replace(/'/gi, "''")}')`, (error, result, fields) => {
       cb(error, result)
     })
   },
   updateItemModel: (id, data, cb) => {
     const { name, price, description } = data
 
-    db.query(`update ${table} set name = '${name}', price = ${price}, description = '${description}' where id = '${id}'`, (error, result, fields) => {
+    db.query(`update ${table} set name = '${name.replace(/'/gi, "''")}', price = ${price}, description = '${description.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
   },
   updatePartiallyItemModel: (id, data, cb) => {
-    db.query(`update ${table} set ${data} where id = '${id}'`, (error, result, fields) => {
+    db.query(`update ${table} set ${data} where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
   },
   deleteItemModel: (id, cb) => {
-    db.query(`delete from ${table} where id = '${id}'`, (error, result, fields) => {
+    db.query(`delete from ${table} where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
   },
   getItemsModel: (searchKey, searchValue, page, limit, sortColumn, sortOption, cb) => {
-    db.query(`select * from ${table} where ${searchKey} like '%${searchValue}%' order by ${sortColumn} ${sortOption} limit ${limit} offset ${(page - 1) * limit}`, (error, result, fields) => {
+    db.query(`select * from ${table} where ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%' order by ${sortColumn} ${sortOption} limit ${limit} offset ${(page - 1) * limit}`, (error, result, fields) => {
       cb(error, result)
     })
   },
   countItemsModel: (searchKey, searchValue, cb) => {
-    db.query(`select count(*) as count from items where ${searchKey} like '%${searchValue}%'`, (_error, result, fields) => {
+    db.query(`select count(*) as count from items where ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
       cb(result)
     })
   }
