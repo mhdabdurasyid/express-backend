@@ -3,6 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const itemsRouter = require('./src/routes/items')
 const categoriesRouter = require('./src/routes/categories')
+const colorsRouter = require('./src/routes/colors')
 
 const app = express()
 
@@ -11,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/item', itemsRouter)
 app.use('/category', categoriesRouter)
+app.use('/color', colorsRouter)
 
 // listening on port 8080
 app.listen(8080, () => {
