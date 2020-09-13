@@ -124,23 +124,30 @@ module.exports = {
     const { name, price, description, stock, categoryID, conditionID, colorID, sellerID } = request.body
 
     if (name && price && description && stock && categoryID && conditionID && colorID && sellerID) {
-      addItemModel(request.body, (error, result) => {
-        if (!error) {
-          response.send({
-            success: true,
-            message: 'Success add item',
-            data: {
-              id: result.insertId,
-              ...request.body
-            }
-          })
-        } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
-        }
-      })
+      if (price > 0 && stock >= 0 && Number.isInteger(price) && Number.isInteger(stock)) {
+        addItemModel(request.body, (error, result) => {
+          if (!error) {
+            response.send({
+              success: true,
+              message: 'Success add item',
+              data: {
+                id: result.insertId,
+                ...request.body
+              }
+            })
+          } else {
+            response.status(500).send({
+              success: false,
+              message: error.message
+            })
+          }
+        })
+      } else {
+        response.status(400).send({
+          success: false,
+          message: 'Price & stock must be a positive integer'
+        })
+      }
     } else {
       response.status(400).send({
         success: false,
@@ -156,26 +163,33 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (name.trim() && price.trim() && description.trim() && stock.trim() && categoryID.trim() && conditionID.trim() && colorID.trim()) {
-        updateItemModel(id, request.body, (error, result) => {
-          if (!error) {
-            if (result.affectedRows) {
-              response.send({
-                success: true,
-                message: `Success update item with ID ${id}!`
-              })
+        if (price > 0 && stock >= 0 && Number.isInteger(price) && Number.isInteger(stock)) {
+          updateItemModel(id, request.body, (error, result) => {
+            if (!error) {
+              if (result.affectedRows) {
+                response.send({
+                  success: true,
+                  message: `Success update item with ID ${id}!`
+                })
+              } else {
+                response.status(400).send({
+                  success: false,
+                  message: `Update failed! ID ${id} not found`
+                })
+              }
             } else {
-              response.status(400).send({
+              response.status(500).send({
                 success: false,
-                message: `Update failed! ID ${id} not found`
+                message: error.message
               })
             }
-          } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
-          }
-        })
+          })
+        } else {
+          response.status(400).send({
+            success: false,
+            message: 'Price & stock must be a positive integer'
+          })
+        }
       } else {
         response.status(400).send({
           success: false,
@@ -197,28 +211,35 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (name.trim() || price.trim() || description.trim() || stock.trim() || categoryID.trim() || conditionID.trim() || colorID.trim()) {
-        const patchData = Object.entries(request.body).map(el => Number(el[1]) ? `${el[0]} = ${el[1]}` : `${el[0]} = '${el[1].replace(/'/gi, "''")}'`).join(', ')
+        if (request.body.stock < 0 || request.body.price <= 0) {
+          response.status(400).send({
+            success: false,
+            message: 'Price & stock must be a positive integer'
+          })
+        } else {
+          const patchData = Object.entries(request.body).map(el => Number(el[1]) ? `${el[0]} = ${el[1]}` : `${el[0]} = '${el[1].replace(/'/gi, "''")}'`).join(', ')
 
-        updatePartiallyItemModel(id, patchData, (error, result) => {
-          if (!error) {
-            if (result.affectedRows) {
-              response.send({
-                success: true,
-                message: `Success update item with ID ${id}!`
-              })
+          updatePartiallyItemModel(id, patchData, (error, result) => {
+            if (!error) {
+              if (result.affectedRows) {
+                response.send({
+                  success: true,
+                  message: `Success update item with ID ${id}!`
+                })
+              } else {
+                response.status(400).send({
+                  success: false,
+                  message: `Update failed! ID ${id} not found`
+                })
+              }
             } else {
-              response.status(400).send({
+              response.status(500).send({
                 success: false,
-                message: `Update failed! ID ${id} not found`
+                message: error.message
               })
             }
-          } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
-          }
-        })
+          })
+        }
       } else {
         response.status(400).send({
           success: false,
