@@ -152,21 +152,21 @@ module.exports = {
     let { id } = request.params
     id = Number(id)
 
-    const { name = '', price = '', description = '' } = request.body
+    const { name = '', price = '', description = '', stock = '', categoryID = '', conditionID = '', colorID = '' } = request.body
 
     if (typeof id === 'number' && !isNaN(id)) {
-      if (name.trim() && price.trim() && description.trim()) {
+      if (name.trim() && price.trim() && description.trim() && stock.trim() && categoryID.trim() && conditionID.trim() && colorID.trim()) {
         updateItemModel(id, request.body, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
               response.send({
                 success: true,
-                message: 'Update item success!'
+                message: `Success update item with ID ${id}!`
               })
             } else {
               response.status(400).send({
                 success: false,
-                message: 'Update failed! ID not found'
+                message: `Update failed! ID ${id} not found`
               })
             }
           } else {
@@ -193,10 +193,10 @@ module.exports = {
     let { id } = request.params
     id = Number(id)
 
-    const { name = '', price = '', description = '' } = request.body
+    const { name = '', price = '', description = '', stock = '', categoryID = '', conditionID = '', colorID = '' } = request.body
 
     if (typeof id === 'number' && !isNaN(id)) {
-      if (name.trim() || price.trim() || description.trim()) {
+      if (name.trim() || price.trim() || description.trim() || stock.trim() || categoryID.trim() || conditionID.trim() || colorID.trim()) {
         const patchData = Object.entries(request.body).map(el => Number(el[1]) ? `${el[0]} = ${el[1]}` : `${el[0]} = '${el[1].replace(/'/gi, "''")}'`).join(', ')
 
         updatePartiallyItemModel(id, patchData, (error, result) => {
@@ -204,12 +204,12 @@ module.exports = {
             if (result.affectedRows) {
               response.send({
                 success: true,
-                message: 'Update item success!'
+                message: `Success update item with ID ${id}!`
               })
             } else {
               response.status(400).send({
                 success: false,
-                message: 'Update failed! ID not found'
+                message: `Update failed! ID ${id} not found`
               })
             }
           } else {

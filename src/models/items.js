@@ -15,9 +15,9 @@ module.exports = {
     })
   },
   updateItemModel: (id, data, cb) => {
-    const { name, price, description } = data
+    const { name, price, description, stock, categoryID, conditionID, colorID } = data
 
-    db.query(`update ${table} set name = '${name.replace(/'/gi, "''")}', price = ${price}, description = '${description.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
+    db.query(`update ${table} set name = '${name.replace(/'/gi, "''")}', price = ${price}, description = '${description.replace(/'/gi, "''")}', stock = ${stock}, category_id = ${categoryID}, condition_id = ${conditionID}, color_id = ${colorID} where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
   },
