@@ -7,6 +7,6 @@ router.get('/', getColors)
 // router.get('/:id', getDetailColor)
 router.post('/', addColor)
 router.put('/:id', updateColor)
-// router.delete('/:id', deleteColor)
+router.delete('/:id', deleteColor)
 
 module.exports = router

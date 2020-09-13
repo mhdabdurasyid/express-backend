@@ -104,7 +104,7 @@ module.exports = {
           if (result.affectedRows) {
             response.send({
               success: true,
-              message: `Success delete item with ID ${id}!`
+              message: `Success delete category with ID ${id}!`
             })
           } else {
             response.status(400).send({
