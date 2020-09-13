@@ -1,5 +1,5 @@
 const qs = require('querystring')
-const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel, updateSellerPartialModel } = require('../models/sellers')
+const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel, updateSellerPartialModel, deleteSellerModel } = require('../models/sellers')
 
 module.exports = {
   addSeller: (request, response) => {
@@ -178,6 +178,38 @@ module.exports = {
           message: 'Update failed! Incomplete key & value'
         })
       }
+    } else {
+      response.status(400).send({
+        success: false,
+        message: 'Invalid or bad ID'
+      })
+    }
+  },
+  deleteSeller: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      deleteSellerModel(id, (error, result) => {
+        if (!error) {
+          if (result.affectedRows) {
+            response.send({
+              success: true,
+              message: `Success delete seller with ID ${id}!`
+            })
+          } else {
+            response.status(400).send({
+              success: false,
+              message: `Delete failed! ID ${id} not found`
+            })
+          }
+        } else {
+          response.status(500).send({
+            success: false,
+            message: error.message
+          })
+        }
+      })
     } else {
       response.status(400).send({
         success: false,
