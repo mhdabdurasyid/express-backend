@@ -8,9 +8,9 @@ module.exports = {
     })
   },
   addItemModel: (data, cb) => {
-    const { name, price, description } = data
+    const { name, price, description, stock, categoryID, conditionID, colorID, sellerID } = data
 
-    db.query(`insert into ${table} (name, price, description) values ('${name.replace(/'/gi, "''")}', ${price}, '${description.replace(/'/gi, "''")}')`, (error, result, fields) => {
+    db.query(`insert into ${table} (name, price, description, stock, category_id, condition_id, color_id, seller_id) values ('${name.replace(/'/gi, "''")}', ${price}, '${description.replace(/'/gi, "''")}', ${stock}, ${categoryID}, ${conditionID}, ${colorID}, ${sellerID})`, (error, result, fields) => {
       cb(error, result)
     })
   },

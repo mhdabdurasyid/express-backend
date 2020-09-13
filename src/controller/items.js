@@ -121,9 +121,9 @@ module.exports = {
     })
   },
   addItem: (request, response) => {
-    const { name, price, description } = request.body
+    const { name, price, description, stock, categoryID, conditionID, colorID, sellerID } = request.body
 
-    if (name && price && description) {
+    if (name && price && description && stock && categoryID && conditionID && colorID && sellerID) {
       addItemModel(request.body, (error, result) => {
         if (!error) {
           response.send({
