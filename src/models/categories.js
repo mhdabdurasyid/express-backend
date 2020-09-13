@@ -13,7 +13,7 @@ module.exports = {
     })
   },
   updateCategoryModel: (id, name, cb) => {
-    db.query(`update ${table} set name = '${name}' where id = ${id}`, (error, result, fields) => {
+    db.query(`update ${table} set name = '${name.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
   },
