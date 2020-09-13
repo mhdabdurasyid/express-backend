@@ -1,5 +1,5 @@
 // const qs = require('querystring')
-const { addCategoryModel, getCategoriesModel, updateCategoryModel, deleteCategoryModel } = require('../models/categories')
+const { addCategoryModel, getCategoriesModel, updateCategoryModel, deleteCategoryModel, getDetailCategoryModel } = require('../models/categories')
 
 module.exports = {
   addCategory: (request, response) => {
@@ -110,6 +110,40 @@ module.exports = {
             response.status(400).send({
               success: false,
               message: `Delete failed! ID ${id} not found`
+            })
+          }
+        } else {
+          response.status(500).send({
+            success: false,
+            message: error.message
+          })
+        }
+      })
+    } else {
+      response.status(400).send({
+        success: false,
+        message: 'Invalid or bad ID'
+      })
+    }
+  },
+  getDetailCategory: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      getDetailCategoryModel(id, (error, result) => {
+        if (!error) {
+          if (result.length) {
+            response.send({
+              success: true,
+              message: 'Found a category',
+              data: result
+            })
+          } else {
+            response.send({
+              success: false,
+              message: 'No data found',
+              data: result
             })
           }
         } else {
