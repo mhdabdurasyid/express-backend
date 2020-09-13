@@ -1,5 +1,5 @@
 // const qs = require('querystring')
-const { addCategoryModel, getCategoriesModel, updateCategoryModel } = require('../models/categories')
+const { addCategoryModel, getCategoriesModel, updateCategoryModel, deleteCategoryModel } = require('../models/categories')
 
 module.exports = {
   addCategory: (request, response) => {
@@ -87,6 +87,38 @@ module.exports = {
           message: 'Update failed! Incomplete key & value'
         })
       }
+    } else {
+      response.status(400).send({
+        success: false,
+        message: 'Invalid or bad ID'
+      })
+    }
+  },
+  deleteCategory: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      deleteCategoryModel(id, (error, result) => {
+        if (!error) {
+          if (result.affectedRows) {
+            response.send({
+              success: true,
+              message: `Success delete item with ID ${id}!`
+            })
+          } else {
+            response.status(400).send({
+              success: false,
+              message: `Delete failed! ID ${id} not found`
+            })
+          }
+        } else {
+          response.status(500).send({
+            success: false,
+            message: error.message
+          })
+        }
+      })
     } else {
       response.status(400).send({
         success: false,

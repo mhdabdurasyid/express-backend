@@ -16,5 +16,10 @@ module.exports = {
     db.query(`update ${table} set name = '${name}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  deleteCategoryModel: (id, cb) => {
+    db.query(`delete from ${table} where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
