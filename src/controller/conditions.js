@@ -1,5 +1,5 @@
 // const qs = require('querystring')
-const { addConditionModel, getConditionsModel } = require('../models/conditions')
+const { addConditionModel, getConditionsModel, updateConditionModel } = require('../models/conditions')
 
 module.exports = {
   addCondition: (request, response) => {
@@ -52,5 +52,46 @@ module.exports = {
         })
       }
     })
+  },
+  updateCondition: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    const { name = '' } = request.body
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      if (name.trim()) {
+        updateConditionModel(id, name, (error, result) => {
+          if (!error) {
+            if (result.affectedRows) {
+              response.send({
+                success: true,
+                message: `Success update condition with ID ${id}!`
+              })
+            } else {
+              response.status(400).send({
+                success: false,
+                message: `Update failed! ID ${id} not found`
+              })
+            }
+          } else {
+            response.status(500).send({
+              success: false,
+              message: error.message
+            })
+          }
+        })
+      } else {
+        response.status(400).send({
+          success: false,
+          message: 'Update failed! Incomplete key & value'
+        })
+      }
+    } else {
+      response.status(400).send({
+        success: false,
+        message: 'Invalid or bad ID'
+      })
+    }
   }
 }

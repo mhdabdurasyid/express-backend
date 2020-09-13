@@ -6,7 +6,7 @@ const router = Router()
 router.get('/', getConditions)
 // router.get('/:id', getDetailCondition)
 router.post('/', addCondition)
-// router.put('/:id', updateCondition)
+router.put('/:id', updateCondition)
 // router.delete('/:id', deleteCondition)
 
 module.exports = router
