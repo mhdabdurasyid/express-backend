@@ -16,5 +16,10 @@ module.exports = {
     db.query(`update ${table} set name = '${name.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  deleteConditionModel: (id, cb) => {
+    db.query(`delete from ${table} where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }

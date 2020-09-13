@@ -7,6 +7,6 @@ router.get('/', getConditions)
 // router.get('/:id', getDetailCondition)
 router.post('/', addCondition)
 router.put('/:id', updateCondition)
-// router.delete('/:id', deleteCondition)
+router.delete('/:id', deleteCondition)
 
 module.exports = router
