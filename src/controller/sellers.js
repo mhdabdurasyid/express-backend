@@ -1,5 +1,5 @@
 const qs = require('querystring')
-const { addSellerModel, getSellersModel, countSellersModel } = require('../models/sellers')
+const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel } = require('../models/sellers')
 
 module.exports = {
   addSeller: (request, response) => {
@@ -100,5 +100,46 @@ module.exports = {
         })
       }
     })
+  },
+  updateSeller: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    const { email = '', password = '', storeName = '', phone = '', storeDescription = '' } = request.body
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      if (email.trim() && password.trim() && storeName.trim() && phone.trim() && storeDescription.trim()) {
+        updateSellerModel(id, request.body, (error, result) => {
+          if (!error) {
+            if (result.affectedRows) {
+              response.send({
+                success: true,
+                message: `Success update seller with ID ${id}!`
+              })
+            } else {
+              response.status(400).send({
+                success: false,
+                message: `Update failed! ID ${id} not found`
+              })
+            }
+          } else {
+            response.status(500).send({
+              success: false,
+              message: error.message
+            })
+          }
+        })
+      } else {
+        response.status(400).send({
+          success: false,
+          message: 'Update failed! Incomplete key & value'
+        })
+      }
+    } else {
+      response.status(400).send({
+        success: false,
+        message: 'Invalid or bad ID'
+      })
+    }
   }
 }

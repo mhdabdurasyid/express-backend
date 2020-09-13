@@ -18,5 +18,12 @@ module.exports = {
     db.query(`select count(*) as count from ${table} where store_name like '%${search.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
       cb(result)
     })
+  },
+  updateSellerModel: (id, data, cb) => {
+    const { email, password, storeName, phone, storeDescription } = data
+
+    db.query(`update ${table} set email = '${email.replace(/'/gi, "''")}', password = '${password.replace(/'/gi, "''")}', store_name = '${storeName.replace(/'/gi, "''")}', phone = '${phone.replace(/'/gi, "''")}', store_description = '${storeDescription.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
