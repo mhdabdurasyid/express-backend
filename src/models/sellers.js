@@ -25,5 +25,10 @@ module.exports = {
     db.query(`update ${table} set email = '${email.replace(/'/gi, "''")}', password = '${password.replace(/'/gi, "''")}', store_name = '${storeName.replace(/'/gi, "''")}', phone = '${phone.replace(/'/gi, "''")}', store_description = '${storeDescription.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  updateSellerPartialModel: (id, data, cb) => {
+    db.query(`update ${table} set ${data} where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
