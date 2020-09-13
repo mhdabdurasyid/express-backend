@@ -56,7 +56,7 @@ module.exports = {
       sortColumn = Object.keys(sort)[0]
       sortOption = Object.values(sort)[0]
     } else {
-      sortColumn = 'id'
+      sortColumn = 'created_at'
       sortOption = sort || ''
     }
 
