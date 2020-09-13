@@ -11,5 +11,10 @@ module.exports = {
     db.query(`select * from ${table}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  updateCategoryModel: (id, name, cb) => {
+    db.query(`update ${table} set name = '${name}' where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
