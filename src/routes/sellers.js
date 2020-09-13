@@ -3,7 +3,7 @@ const { getSellers, addSeller, updateSeller, deleteSeller } = require('../contro
 
 const router = Router()
 
-// router.get('/', getSellers)
+router.get('/', getSellers)
 // router.get('/:id', getDetailSeller)
 router.post('/', addSeller)
 // router.put('/:id', updateSeller)

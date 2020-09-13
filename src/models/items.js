@@ -37,7 +37,7 @@ module.exports = {
     })
   },
   countItemsModel: (searchKey, searchValue, cb) => {
-    db.query(`select count(*) as count from items where ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
+    db.query(`select count(*) as count from ${table} where ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
       cb(result)
     })
   }

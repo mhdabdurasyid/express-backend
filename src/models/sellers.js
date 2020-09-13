@@ -8,5 +8,15 @@ module.exports = {
     db.query(`insert into ${table} (email, password, store_name, phone, store_description) values ('${email.replace(/'/gi, "''")}', '${password.replace(/'/gi, "''")}', '${storeName.replace(/'/gi, "''")}', '${phone.replace(/'/gi, "''")}', '${storeDescription.replace(/'/gi, "''")}')`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  getSellersModel: (page, limit, search, sort, cb) => {
+    db.query(`select id, store_name, phone, store_description, store_photo from ${table} where store_name like '%${search.replace(/'/gi, "''")}%' order by store_name ${sort} limit ${limit} offset ${(page - 1) * limit}`, (error, result, fields) => {
+      cb(error, result)
+    })
+  },
+  countSellersModel: (search, cb) => {
+    db.query(`select count(*) as count from ${table} where store_name like '%${search.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
+      cb(result)
+    })
   }
 }
