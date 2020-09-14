@@ -124,7 +124,7 @@ module.exports = {
     const { name, price, description, stock, categoryID, conditionID, colorID, sellerID } = request.body
 
     if (name && price && description && stock && categoryID && conditionID && colorID && sellerID) {
-      if (price > 0 && stock >= 0 && Number.isInteger(price) && Number.isInteger(stock)) {
+      if (request.body.stock > 0 && request.body.price > 0) {
         addItemModel(request.body, (error, result) => {
           if (!error) {
             response.send({
@@ -163,7 +163,7 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (name.trim() && price.trim() && description.trim() && stock.trim() && categoryID.trim() && conditionID.trim() && colorID.trim()) {
-        if (price > 0 && stock >= 0 && Number.isInteger(price) && Number.isInteger(stock)) {
+        if (request.body.stock > 0 && request.body.price > 0) {
           updateItemModel(id, request.body, (error, result) => {
             if (!error) {
               if (result.affectedRows) {

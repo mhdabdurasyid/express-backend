@@ -46,5 +46,17 @@ module.exports = {
     db.query(`select count(*) as count from ${table} where ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
       cb(result)
     })
+  },
+  getItemsByCategory: (searchKey, searchValue, page, limit, sortColumn, sortOption, categoryID, cb) => {
+    db.query(`select * from ${table} where category_id = ${categoryID}
+    and ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%' 
+    order by ${sortColumn} ${sortOption} limit ${limit} offset ${(page - 1) * limit}`, (error, result, fields) => {
+      cb(error, result)
+    })
+  },
+  countItemsByCategory: (searchKey, searchValue, categoryID, cb) => {
+    db.query(`select count(*) as count from ${table} where category_id = ${categoryID} and ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
+      cb(result)
+    })
   }
 }
