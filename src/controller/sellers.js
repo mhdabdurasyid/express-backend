@@ -53,53 +53,60 @@ module.exports = {
       sort = 'asc'
     }
 
-    getSellersModel(page, limit, search, sort, (error, result) => {
-      if (!error) {
-        const pageInfo = {
-          count: 0,
-          pages: 0,
-          currentPage: page,
-          limitPerPage: limit,
-          nextLink: null,
-          prevLink: null
-        }
+    if (Number.isNaN(page) || Number.isNaN(limit) || Math.sign(page) === -1 || Math.sign(limit) === -1 || Math.sign(page) === 0 || Math.sign(limit) === 0) {
+      response.status(400).send({
+        success: false,
+        message: 'Page or limit must be a positive number'
+      })
+    } else {
+      getSellersModel(page, limit, search, sort, (error, result) => {
+        if (!error) {
+          const pageInfo = {
+            count: 0,
+            pages: 0,
+            currentPage: page,
+            limitPerPage: limit,
+            nextLink: null,
+            prevLink: null
+          }
 
-        if (result.length) {
-          countSellersModel(search, (data) => {
-            const { count } = data[0]
-            pageInfo.count = count
-            pageInfo.pages = Math.ceil(count / limit)
+          if (result.length) {
+            countSellersModel(search, (data) => {
+              const { count } = data[0]
+              pageInfo.count = count
+              pageInfo.pages = Math.ceil(count / limit)
 
-            const { pages, currentPage } = pageInfo
+              const { pages, currentPage } = pageInfo
 
-            if (currentPage < pages) {
-              pageInfo.nextLink = `http://localhost:8080/seller?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
-            }
+              if (currentPage < pages) {
+                pageInfo.nextLink = `http://localhost:8080/seller?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+              }
 
-            if (currentPage > 1) {
-              pageInfo.prevLink = `http://localhost:8080/seller?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
-            }
+              if (currentPage > 1) {
+                pageInfo.prevLink = `http://localhost:8080/seller?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+              }
 
-            response.send({
-              success: true,
-              message: 'List of sellers',
-              pageInfo,
-              data: result
+              response.send({
+                success: true,
+                message: 'List of sellers',
+                pageInfo,
+                data: result
+              })
             })
-          })
+          } else {
+            response.status(400).send({
+              success: false,
+              message: 'No data on this page'
+            })
+          }
         } else {
-          response.status(400).send({
+          response.status(500).send({
             success: false,
-            message: 'No data on this page'
+            message: error.message
           })
         }
-      } else {
-        response.status(500).send({
-          success: false,
-          message: error.message
-        })
-      }
-    })
+      })
+    }
   },
   updateSeller: (request, response) => {
     let { id } = request.params
