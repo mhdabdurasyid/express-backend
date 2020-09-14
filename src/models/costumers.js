@@ -19,5 +19,10 @@ module.exports = {
     db.query(`update ${table} set ${data} where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  deleteCostumerModel: (id, cb) => {
+    db.query(`delete from ${table} where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
