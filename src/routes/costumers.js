@@ -3,7 +3,7 @@ const { addCostumer, updateCostumerPartial, deleteCostumer, getDetailCostumer } 
 
 const router = Router()
 
-// router.get('/:id', getDetailCostumer)
+router.get('/:id', getDetailCostumer)
 router.post('/', addCostumer)
 // router.patch('/:id', updateCostumerPartial)
 // router.delete('/:id', deleteCostumer)
