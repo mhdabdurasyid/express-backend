@@ -47,15 +47,15 @@ module.exports = {
       cb(result)
     })
   },
-  getItemsByCategory: (searchKey, searchValue, page, limit, sortColumn, sortOption, categoryID, cb) => {
-    db.query(`select * from ${table} where category_id = ${categoryID}
+  getItemsByColumn: (searchKey, searchValue, page, limit, sortColumn, sortOption, columnID, categoryID, cb) => {
+    db.query(`select * from ${table} where ${columnID} = ${categoryID}
     and ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%' 
     order by ${sortColumn} ${sortOption} limit ${limit} offset ${(page - 1) * limit}`, (error, result, fields) => {
       cb(error, result)
     })
   },
-  countItemsByCategory: (searchKey, searchValue, categoryID, cb) => {
-    db.query(`select count(*) as count from ${table} where category_id = ${categoryID} and ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
+  countItemsByColumn: (searchKey, searchValue, columnID, categoryID, cb) => {
+    db.query(`select count(*) as count from ${table} where ${columnID} = ${categoryID} and ${searchKey} like '%${searchValue.replace(/'/gi, "''")}%'`, (_error, result, fields) => {
       cb(result)
     })
   }

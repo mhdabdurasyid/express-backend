@@ -1,6 +1,6 @@
 const qs = require('querystring')
 const { addCategoryModel, getCategoriesModel, updateCategoryModel, deleteCategoryModel, getDetailCategoryModel } = require('../models/categories')
-const { getItemsByCategory, countItemsByCategory } = require('../models/items')
+const { getItemsByColumn, countItemsByColumn } = require('../models/items')
 
 module.exports = {
   addCategory: (request, response) => {
@@ -176,7 +176,7 @@ module.exports = {
         getDetailCategoryModel(id, (error, result) => {
           if (!error) {
             if (result.length) {
-              getItemsByCategory(searchKey, searchValue, page, limit, sortColumn, sortOption, result[0].id, (err, items) => {
+              getItemsByColumn(searchKey, searchValue, page, limit, sortColumn, sortOption, 'category_id', result[0].id, (err, items) => {
                 if (!err) {
                   const pageInfo = {
                     count: 0,
@@ -188,7 +188,7 @@ module.exports = {
                   }
 
                   if (items.length) {
-                    countItemsByCategory(searchKey, searchValue, result[0].id, (data) => {
+                    countItemsByColumn(searchKey, searchValue, 'category_id', result[0].id, (data) => {
                       const { count } = data[0]
                       pageInfo.count = count
                       pageInfo.pages = Math.ceil(count / limit)

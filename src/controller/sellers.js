@@ -1,5 +1,6 @@
 const qs = require('querystring')
-const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel, updateSellerPartialModel, deleteSellerModel } = require('../models/sellers')
+const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel, updateSellerPartialModel, deleteSellerModel, getDetailSellerModel } = require('../models/sellers')
+const { getItemsByColumn, countItemsByColumn } = require('../models/items')
 
 module.exports = {
   addSeller: (request, response) => {
@@ -217,6 +218,127 @@ module.exports = {
           })
         }
       })
+    } else {
+      response.status(400).send({
+        success: false,
+        message: 'Invalid or bad ID'
+      })
+    }
+  },
+  getDetailSeller: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    let { page, limit, search, sort } = request.query
+
+    let searchKey = ''
+    let searchValue = ''
+    let sortColumn = ''
+    let sortOption = ''
+
+    if (typeof search === 'object') {
+      searchKey = Object.keys(search)[0]
+      searchValue = Object.values(search)[0]
+    } else {
+      searchKey = 'name'
+      searchValue = search || ''
+    }
+
+    if (typeof sort === 'object') {
+      sortColumn = Object.keys(sort)[0]
+      sortOption = Object.values(sort)[0]
+    } else {
+      sortColumn = 'created_at'
+      sortOption = sort || ''
+    }
+
+    if (!limit) {
+      limit = 10
+    } else {
+      limit = parseInt(limit)
+    }
+
+    if (!page) {
+      page = 1
+    } else {
+      page = parseInt(page)
+    }
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      if (Number.isNaN(page) || Number.isNaN(limit) || Math.sign(page) === -1 || Math.sign(limit) === -1 || Math.sign(page) === 0 || Math.sign(limit) === 0) {
+        response.status(400).send({
+          success: false,
+          message: 'Page or limit must be a postive number'
+        })
+      } else {
+        getDetailSellerModel(id, (error, result) => {
+          if (!error) {
+            if (result.length) {
+              getItemsByColumn(searchKey, searchValue, page, limit, sortColumn, sortOption, 'seller_id', result[0].id, (err, items) => {
+                if (!err) {
+                  const pageInfo = {
+                    count: 0,
+                    pages: 0,
+                    currentPage: page,
+                    limitPerPage: limit,
+                    nextLink: null,
+                    prevLink: null
+                  }
+
+                  if (items.length) {
+                    countItemsByColumn(searchKey, searchValue, 'seller_id', result[0].id, (data) => {
+                      const { count } = data[0]
+                      pageInfo.count = count
+                      pageInfo.pages = Math.ceil(count / limit)
+
+                      const { pages, currentPage } = pageInfo
+
+                      if (currentPage < pages) {
+                        pageInfo.nextLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                      }
+
+                      if (currentPage > 1) {
+                        pageInfo.prevLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                      }
+
+                      response.send({
+                        success: true,
+                        message: 'Found a seller',
+                        pageInfo,
+                        data: {
+                          seller: result,
+                          items: items
+                        }
+                      })
+                    })
+                  } else {
+                    response.status(400).send({
+                      success: false,
+                      message: 'No data on this page'
+                    })
+                  }
+                } else {
+                  response.status(500).send({
+                    success: false,
+                    message: error.message
+                  })
+                }
+              })
+            } else {
+              response.send({
+                success: false,
+                message: 'No data found',
+                data: result
+              })
+            }
+          } else {
+            response.status(500).send({
+              success: false,
+              message: error.message
+            })
+          }
+        })
+      }
     } else {
       response.status(400).send({
         success: false,
