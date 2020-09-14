@@ -14,5 +14,10 @@ module.exports = {
     from ${table} join genders on gender_id = genders.id where ${table}.id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  updateCostumerPartialModel: (id, data, cb) => {
+    db.query(`update ${table} set ${data} where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
