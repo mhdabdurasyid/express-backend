@@ -7,6 +7,7 @@ const colorsRouter = require('./src/routes/colors')
 const conditionsRouter = require('./src/routes/conditions')
 const sellersRouter = require('./src/routes/sellers')
 const costumersRouter = require('./src/routes/costumers')
+const cartsRouter = require('./src/routes/carts')
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.use('/color', colorsRouter)
 app.use('/condition', conditionsRouter)
 app.use('/seller', sellersRouter)
 app.use('/costumer', costumersRouter)
+app.use('/cart', cartsRouter)
 
 // listening on port 8080
 app.listen(8080, () => {
