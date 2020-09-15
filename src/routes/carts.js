@@ -5,7 +5,7 @@ const router = Router()
 
 router.get('/:costumerID', getDetailCart)
 router.post('/', addCart)
-// router.patch('/:id', updateCartPartial)
+router.patch('/:costumerID/:itemID', updateCartPartial)
 // router.delete('/:id', deleteCart)
 
 module.exports = router

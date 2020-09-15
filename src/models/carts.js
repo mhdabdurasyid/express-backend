@@ -17,5 +17,10 @@ module.exports = {
     where ${table}.costumer_id = ${costumerID}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  updateCartPartialModel: (costumerID, itemID, quantity, cb) => {
+    db.query(`update ${table} set quantity = ${quantity} where costumer_id = ${costumerID} and item_id = ${itemID}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
