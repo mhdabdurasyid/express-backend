@@ -3,7 +3,7 @@ const { addCart, updateCartPartial, deleteCart, getDetailCart } = require('../co
 
 const router = Router()
 
-// router.get('/:id', getDetailCart)
+router.get('/:costumerID', getDetailCart)
 router.post('/', addCart)
 // router.patch('/:id', updateCartPartial)
 // router.delete('/:id', deleteCart)
