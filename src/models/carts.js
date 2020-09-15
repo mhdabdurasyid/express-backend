@@ -22,5 +22,10 @@ module.exports = {
     db.query(`update ${table} set quantity = ${quantity} where costumer_id = ${costumerID} and item_id = ${itemID}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  deleteCartModel: (costumerID, itemID, cb) => {
+    db.query(`delete from ${table} where costumer_id = ${costumerID} and item_id = ${itemID}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }

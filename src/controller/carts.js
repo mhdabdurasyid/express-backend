@@ -1,4 +1,4 @@
-const { addCartModel, getDetailCartModel, updateCartPartialModel } = require('../models/carts')
+const { addCartModel, getDetailCartModel, updateCartPartialModel, deleteCartModel } = require('../models/carts')
 
 module.exports = {
   addCart: (request, response) => {
@@ -85,7 +85,7 @@ module.exports = {
               if (result.affectedRows) {
                 response.send({
                   success: true,
-                  message: `Success update quantity with item ID ${itemID} and customer ID ${costumerID}!`
+                  message: `Success update quantity of item ID ${itemID} from customer ID ${costumerID}!`
                 })
               } else {
                 response.status(400).send({
@@ -107,6 +107,39 @@ module.exports = {
           message: 'Update failed! Incomplete key & value'
         })
       }
+    } else {
+      response.status(400).send({
+        success: false,
+        message: 'Invalid or bad ID'
+      })
+    }
+  },
+  deleteCart: (request, response) => {
+    let { costumerID, itemID } = request.params
+    costumerID = Number(costumerID)
+    itemID = Number(itemID)
+
+    if (typeof costumerID === 'number' && !isNaN(costumerID) && typeof itemID === 'number' && !isNaN(itemID)) {
+      deleteCartModel(costumerID, itemID, (error, result) => {
+        if (!error) {
+          if (result.affectedRows) {
+            response.send({
+              success: true,
+              message: `Success delete item ID ${itemID} from customer ID ${costumerID}!`
+            })
+          } else {
+            response.status(400).send({
+              success: false,
+              message: 'Update failed! Item not found on cart'
+            })
+          }
+        } else {
+          response.status(500).send({
+            success: false,
+            message: error.message
+          })
+        }
+      })
     } else {
       response.status(400).send({
         success: false,
