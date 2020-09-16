@@ -9,7 +9,13 @@ const sellersRouter = require('./src/routes/sellers')
 const costumersRouter = require('./src/routes/costumers')
 const cartsRouter = require('./src/routes/carts')
 
+// enable CORS
+const cors = require('cors')
+
 const app = express()
+
+// enable CORS
+app.use(cors())
 
 // configure express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }))
