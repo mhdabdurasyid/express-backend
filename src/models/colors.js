@@ -8,7 +8,7 @@ module.exports = {
     })
   },
   getColorsModel: (cb) => {
-    db.query(`select * from ${table}`, (error, result, fields) => {
+    db.query(`select * from ${table} order by name`, (error, result, fields) => {
       cb(error, result)
     })
   },
