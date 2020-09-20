@@ -312,9 +312,14 @@ module.exports = {
                       })
                     })
                   } else {
-                    response.status(400).send({
+                    response.status(200).send({
                       success: false,
-                      message: 'No data on this page'
+                      message: 'No data on this page',
+                      pageInfo,
+                      data: {
+                        seller: {},
+                        items: {}
+                      }
                     })
                   }
                 } else {
