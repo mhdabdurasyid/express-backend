@@ -59,10 +59,12 @@ module.exports = {
     id = Number(id)
 
     const { name = '' } = request.body
+    const image = request.file
+    const pathImage = `/uploads/${image.filename}`
 
     if (typeof id === 'number' && !isNaN(id)) {
-      if (name.trim()) {
-        updateCategoryModel(id, name, (error, result) => {
+      if (name.trim() && image) {
+        updateCategoryModel(id, name, pathImage, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
               response.send({

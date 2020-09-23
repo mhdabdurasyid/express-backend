@@ -17,8 +17,13 @@ const app = express()
 // enable CORS
 app.use(cors())
 
+// import middleware
+// const authMidlleware = require('./src/middlewares/auth')
+
 // configure express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }))
+
+app.use('/uploads', express.static('assets/uploads'))
 
 app.use('/item', itemsRouter)
 app.use('/category', categoriesRouter)

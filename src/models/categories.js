@@ -12,8 +12,8 @@ module.exports = {
       cb(error, result)
     })
   },
-  updateCategoryModel: (id, name, cb) => {
-    db.query(`update ${table} set name = '${name.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
+  updateCategoryModel: (id, name, pathImage, cb) => {
+    db.query(`update ${table} set name = '${name.replace(/'/gi, "''")}', img_url = '${pathImage}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
   },
