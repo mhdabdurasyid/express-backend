@@ -1,5 +1,5 @@
-// const qs = require('querystring')
 const { addConditionModel, getConditionsModel, updateConditionModel, deleteConditionModel } = require('../models/conditions')
+const responseStandard = require('../helpers/responses')
 
 module.exports = {
   addCondition: (request, response) => {
@@ -8,48 +8,30 @@ module.exports = {
     if (name) {
       addConditionModel(name, (error, result) => {
         if (!error) {
-          response.send({
-            success: true,
-            message: 'Success add condition',
+          return responseStandard(response, 'Success add new condition', {
             data: {
               id: result.insertId,
               ...request.body
             }
           })
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Incomplete data on key & value'
-      })
+      return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
   },
   getConditions: (request, response) => {
     getConditionsModel((error, result) => {
       if (!error) {
         if (result.length) {
-          response.send({
-            success: true,
-            message: 'List of conditions',
-            data: result
-          })
+          return responseStandard(response, 'List of conditions', { data: result })
         } else {
-          response.status(400).send({
-            success: false,
-            message: 'No data on conditions'
-          })
+          return responseStandard(response, 'No data found', {}, 400, false)
         }
       } else {
-        response.status(500).send({
-          success: false,
-          message: error.message
-        })
+        return responseStandard(response, error.message, {}, 500, false)
       }
     })
   },
@@ -64,34 +46,19 @@ module.exports = {
         updateConditionModel(id, name, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
-              response.send({
-                success: true,
-                message: `Success update condition with ID ${id}!`
-              })
+              return responseStandard(response, `Success update condition with ID ${id}!`, {})
             } else {
-              response.status(400).send({
-                success: false,
-                message: `Update failed! ID ${id} not found`
-              })
+              return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
             }
           } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
+            return responseStandard(response, error.message, {}, 500, false)
           }
         })
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   deleteCondition: (request, response) => {
@@ -102,28 +69,16 @@ module.exports = {
       deleteConditionModel(id, (error, result) => {
         if (!error) {
           if (result.affectedRows) {
-            response.send({
-              success: true,
-              message: `Success delete condition with ID ${id}!`
-            })
+            return responseStandard(response, `Success delete condition with ID ${id}!`, {})
           } else {
-            response.status(400).send({
-              success: false,
-              message: `Delete failed! ID ${id} not found`
-            })
+            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   }
 }
