@@ -1,4 +1,5 @@
 const { addCartModel, getDetailCartModel, updateCartPartialModel, deleteCartModel } = require('../models/carts')
+const responseStandard = require('../helpers/responses')
 
 module.exports = {
   addCart: (request, response) => {
@@ -7,23 +8,13 @@ module.exports = {
     if (costumerID && itemID && quantity) {
       addCartModel(request.body, (error, result) => {
         if (!error) {
-          response.send({
-            success: true,
-            message: 'Success add item to cart',
-            data: request.body
-          })
+          return responseStandard(response, 'Success add item to cart', { data: request.body })
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Incomplete data on key & value'
-      })
+      return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
   },
   getDetailCart: (request, response) => {
@@ -39,30 +30,19 @@ module.exports = {
               summary += el.price * el.quantity
             })
 
-            response.send({
-              success: true,
-              message: 'Found a customer cart',
+            return responseStandard(response, 'Found a customer cart', {
               data: result,
               summary: summary
             })
           } else {
-            response.send({
-              success: false,
-              message: 'No data found'
-            })
+            return responseStandard(response, 'No data found', {}, 200, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad costumer ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   updateCartPartial: (request, response) => {
@@ -75,43 +55,25 @@ module.exports = {
     if (typeof costumerID === 'number' && !isNaN(costumerID) && typeof itemID === 'number' && !isNaN(itemID)) {
       if (quantity.trim()) {
         if (Number.isNaN(quantity) || Math.sign(quantity) === -1 || Math.sign(quantity) === 0) {
-          response.status(400).send({
-            success: false,
-            message: 'Update failed! Quantity must be a positive number'
-          })
+          return responseStandard(response, 'Update failed! Quantity must be a positive number', {}, 400, false)
         } else {
           updateCartPartialModel(costumerID, itemID, quantity, (error, result) => {
             if (!error) {
               if (result.affectedRows) {
-                response.send({
-                  success: true,
-                  message: `Success update quantity of item ID ${itemID} from customer ID ${costumerID}!`
-                })
+                return responseStandard(response, `Success update quantity of item ID ${itemID} from customer ID ${costumerID}!`, {})
               } else {
-                response.status(400).send({
-                  success: false,
-                  message: 'Update failed! Item not found on cart'
-                })
+                return responseStandard(response, 'Update failed! Item not found on cart', {}, 400, false)
               }
             } else {
-              response.status(500).send({
-                success: false,
-                message: error.message
-              })
+              return responseStandard(response, error.message, {}, 500, false)
             }
           })
         }
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   deleteCart: (request, response) => {
@@ -123,28 +85,16 @@ module.exports = {
       deleteCartModel(costumerID, itemID, (error, result) => {
         if (!error) {
           if (result.affectedRows) {
-            response.send({
-              success: true,
-              message: `Success delete item ID ${itemID} from customer ID ${costumerID}!`
-            })
+            return responseStandard(response, `Success delete item ID ${itemID} from customer ID ${costumerID}!`, {})
           } else {
-            response.status(400).send({
-              success: false,
-              message: 'Update failed! Item not found on cart'
-            })
+            return responseStandard(response, 'Delete failed! Item not found on cart', {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   }
 }
