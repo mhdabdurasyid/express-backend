@@ -1,34 +1,32 @@
 const qs = require('querystring')
 const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel, updateSellerPartialModel, deleteSellerModel, getDetailSellerModel } = require('../models/sellers')
 const { getItemsByColumn, countItemsByColumn } = require('../models/items')
+const responseStandard = require('../helpers/responses')
+// const bcrypt = require('bcryptjs')
 
 module.exports = {
   addSeller: (request, response) => {
     const { email, password, storeName, phone, storeDescription } = request.body
 
+    // const salt = bcrypt.genSaltSync(10)
+    // const hashedPassword = bcrypt.hashSync(password, salt)
+    // console.log(hashedPassword)
+
     if (email && password && storeName && phone && storeDescription) {
       addSellerModel(request.body, (error, result) => {
         if (!error) {
-          response.send({
-            success: true,
-            message: 'Success add seller',
+          return responseStandard(response, 'Success add new seller', {
             data: {
               id: result.insertId,
               ...request.body
             }
           })
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Incomplete data on key & value'
-      })
+      return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
   },
   getSellers: (request, response) => {
@@ -55,10 +53,7 @@ module.exports = {
     }
 
     if (Number.isNaN(page) || Number.isNaN(limit) || Math.sign(page) === -1 || Math.sign(limit) === -1 || Math.sign(page) === 0 || Math.sign(limit) === 0) {
-      response.status(400).send({
-        success: false,
-        message: 'Page or limit must be a positive number'
-      })
+      return responseStandard(response, 'Page or limit must be a poisitive number', {}, 400, false)
     } else {
       getSellersModel(page, limit, search, sort, (error, result) => {
         if (!error) {
@@ -87,24 +82,16 @@ module.exports = {
                 pageInfo.prevLink = `http://localhost:8080/seller?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
               }
 
-              response.send({
-                success: true,
-                message: 'List of sellers',
+              return responseStandard(response, 'List of sellers', {
                 pageInfo,
                 data: result
               })
             })
           } else {
-            response.status(400).send({
-              success: false,
-              message: 'No data on this page'
-            })
+            return responseStandard(response, 'No data on this page', {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     }
@@ -120,34 +107,19 @@ module.exports = {
         updateSellerModel(id, request.body, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
-              response.send({
-                success: true,
-                message: `Success update seller with ID ${id}!`
-              })
+              return responseStandard(response, `Success update seller with ID ${id}!`, {})
             } else {
-              response.status(400).send({
-                success: false,
-                message: `Update failed! ID ${id} not found`
-              })
+              return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
             }
           } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
+            return responseStandard(response, error.message, {}, 500, false)
           }
         })
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   updateSellerPartial: (request, response) => {
@@ -163,34 +135,19 @@ module.exports = {
         updateSellerPartialModel(id, patchData, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
-              response.send({
-                success: true,
-                message: `Success update seller with ID ${id}!`
-              })
+              return responseStandard(response, `Success update seller with ID ${id}!`, {})
             } else {
-              response.status(400).send({
-                success: false,
-                message: `Update failed! ID ${id} not found`
-              })
+              return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
             }
           } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
+            return responseStandard(response, error.message, {}, 500, false)
           }
         })
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   deleteSeller: (request, response) => {
@@ -201,28 +158,16 @@ module.exports = {
       deleteSellerModel(id, (error, result) => {
         if (!error) {
           if (result.affectedRows) {
-            response.send({
-              success: true,
-              message: `Success delete seller with ID ${id}!`
-            })
+            return responseStandard(response, `Success delete seller with ID ${id}!`, {})
           } else {
-            response.status(400).send({
-              success: false,
-              message: `Delete failed! ID ${id} not found`
-            })
+            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   getDetailSeller: (request, response) => {
@@ -266,10 +211,7 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (Number.isNaN(page) || Number.isNaN(limit) || Math.sign(page) === -1 || Math.sign(limit) === -1 || Math.sign(page) === 0 || Math.sign(limit) === 0) {
-        response.status(400).send({
-          success: false,
-          message: 'Page or limit must be a postive number'
-        })
+        return responseStandard(response, 'Page or limit must be a postive number', {}, 400, false)
       } else {
         getDetailSellerModel(id, (error, result) => {
           if (!error) {
@@ -301,9 +243,7 @@ module.exports = {
                         pageInfo.prevLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
                       }
 
-                      response.send({
-                        success: true,
-                        message: 'Found a seller',
+                      return responseStandard(response, 'Found a seller', {
                         pageInfo,
                         data: {
                           seller: result,
@@ -312,43 +252,28 @@ module.exports = {
                       })
                     })
                   } else {
-                    response.status(200).send({
-                      success: false,
-                      message: 'No data on this page',
+                    return responseStandard(response, 'No data on this page', {
                       pageInfo,
                       data: {
                         seller: {},
                         items: {}
                       }
-                    })
+                    }, 200, false)
                   }
                 } else {
-                  response.status(500).send({
-                    success: false,
-                    message: error.message
-                  })
+                  return responseStandard(response, error.message, {}, 500, false)
                 }
               })
             } else {
-              response.send({
-                success: false,
-                message: 'No data found',
-                data: result
-              })
+              return responseStandard(response, 'No data found', { data: result }, 200, false)
             }
           } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
+            return responseStandard(response, error.message, {}, 500, false)
           }
         })
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   }
 }
