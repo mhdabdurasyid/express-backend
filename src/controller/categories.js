@@ -2,6 +2,7 @@ const qs = require('querystring')
 const { addCategoryModel, getCategoriesModel, updateCategoryModel, deleteCategoryModel, getDetailCategoryModel } = require('../models/categories')
 const { getItemsByColumn, countItemsByColumn } = require('../models/items')
 const upload = require('../helpers/upload')
+const responseStandard = require('../helpers/responses')
 
 module.exports = {
   addCategory: (request, response) => {
@@ -10,48 +11,30 @@ module.exports = {
     if (name) {
       addCategoryModel(name, (error, result) => {
         if (!error) {
-          response.send({
-            success: true,
-            message: 'Success add category',
+          return responseStandard(response, 'Success add new category', {
             data: {
               id: result.insertId,
               ...request.body
             }
           })
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Incomplete data on key & value'
-      })
+      return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
   },
   getCategories: (request, response) => {
     getCategoriesModel((error, result) => {
       if (!error) {
         if (result.length) {
-          response.send({
-            success: true,
-            message: 'List of categories',
-            data: result
-          })
+          return responseStandard(response, 'List of categories', { data: result })
         } else {
-          response.status(400).send({
-            success: false,
-            message: 'No data on categories'
-          })
+          return responseStandard(response, 'No data', {}, 200, false)
         }
       } else {
-        response.status(500).send({
-          success: false,
-          message: error.message
-        })
+        return responseStandard(response, error.message, {}, 500, false)
       }
     })
   },
@@ -63,10 +46,7 @@ module.exports = {
     if (typeof id === 'number' && !isNaN(id)) {
       uploadImage(request, response, (error) => {
         if (error) {
-          response.status(400).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 400, false)
         } else {
           const image = request.file
           const { name = '' } = request.body
@@ -77,36 +57,21 @@ module.exports = {
             updateCategoryModel(id, name, pathImage, (error, result) => {
               if (!error) {
                 if (result.affectedRows) {
-                  response.send({
-                    success: true,
-                    message: `Success update category with ID ${id}!`
-                  })
+                  return responseStandard(response, `Success update category with ID ${id}!`, {})
                 } else {
-                  response.status(400).send({
-                    success: false,
-                    message: `Update failed! ID ${id} not found`
-                  })
+                  return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
                 }
               } else {
-                response.status(500).send({
-                  success: false,
-                  message: error.message
-                })
+                return responseStandard(response, error.message, {}, 500, false)
               }
             })
           } else {
-            response.status(400).send({
-              success: false,
-              message: 'Update failed! Incomplete key & value'
-            })
+            return responseStandard(response, 'All field must be fill', {}, 400, false)
           }
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   deleteCategory: (request, response) => {
@@ -117,28 +82,16 @@ module.exports = {
       deleteCategoryModel(id, (error, result) => {
         if (!error) {
           if (result.affectedRows) {
-            response.send({
-              success: true,
-              message: `Success delete category with ID ${id}!`
-            })
+            return responseStandard(response, `Success delete category with ID ${id}!`, {})
           } else {
-            response.status(400).send({
-              success: false,
-              message: `Delete failed! ID ${id} not found`
-            })
+            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   getDetailCategory: (request, response) => {
@@ -182,10 +135,7 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (Number.isNaN(page) || Number.isNaN(limit) || Math.sign(page) === -1 || Math.sign(limit) === -1 || Math.sign(page) === 0 || Math.sign(limit) === 0) {
-        response.status(400).send({
-          success: false,
-          message: 'Page or limit must be a postive number'
-        })
+        return responseStandard(response, 'Page or limit must be a postive number', {}, 400, false)
       } else {
         getDetailCategoryModel(id, (error, result) => {
           if (!error) {
@@ -217,49 +167,31 @@ module.exports = {
                         pageInfo.prevLink = `http://localhost:8080/category/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
                       }
 
-                      response.send({
-                        success: true,
-                        message: 'Found a category',
+                      return responseStandard(response, 'Found a category', {
                         pageInfo,
                         data: {
-                          category: result,
+                          category: result[0].name,
                           items: items
                         }
                       })
                     })
                   } else {
-                    response.status(400).send({
-                      success: false,
-                      message: 'No data on this page'
-                    })
+                    return responseStandard(response, 'No data on this page', {}, 400, false)
                   }
                 } else {
-                  response.status(500).send({
-                    success: false,
-                    message: error.message
-                  })
+                  return responseStandard(response, error.message, {}, 500, false)
                 }
               })
             } else {
-              response.send({
-                success: false,
-                message: 'No data found',
-                data: result
-              })
+              return responseStandard(response, 'No data found', { data: result })
             }
           } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
+            return responseStandard(response, error.message, {}, 500, false)
           }
         })
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   }
 }
