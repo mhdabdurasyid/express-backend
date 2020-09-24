@@ -1,5 +1,5 @@
-// const qs = require('querystring')
 const { addColorModel, getColorsModel, updateColorModel, deleteColorModel } = require('../models/colors')
+const responseStandard = require('../helpers/responses')
 
 module.exports = {
   addColor: (request, response) => {
@@ -8,48 +8,30 @@ module.exports = {
     if (name) {
       addColorModel(name, (error, result) => {
         if (!error) {
-          response.send({
-            success: true,
-            message: 'Success add color',
+          return responseStandard(response, 'Success add new color', {
             data: {
               id: result.insertId,
               ...request.body
             }
           })
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Incomplete data on key & value'
-      })
+      return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
   },
   getColors: (request, response) => {
     getColorsModel((error, result) => {
       if (!error) {
         if (result.length) {
-          response.send({
-            success: true,
-            message: 'List of colors',
-            data: result
-          })
+          return responseStandard(response, 'List of color', { data: result })
         } else {
-          response.status(400).send({
-            success: false,
-            message: 'No data on colors'
-          })
+          return responseStandard(response, 'No data found', {}, 400, false)
         }
       } else {
-        response.status(500).send({
-          success: false,
-          message: error.message
-        })
+        return responseStandard(response, error.message, {}, 500, false)
       }
     })
   },
@@ -64,34 +46,19 @@ module.exports = {
         updateColorModel(id, name, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
-              response.send({
-                success: true,
-                message: `Success update color with ID ${id}!`
-              })
+              return responseStandard(response, `Success update color with ID ${id}!`, {})
             } else {
-              response.status(400).send({
-                success: false,
-                message: `Update failed! ID ${id} not found`
-              })
+              return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
             }
           } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
+            return responseStandard(response, error.message, {}, 500, false)
           }
         })
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   deleteColor: (request, response) => {
@@ -102,28 +69,16 @@ module.exports = {
       deleteColorModel(id, (error, result) => {
         if (!error) {
           if (result.affectedRows) {
-            response.send({
-              success: true,
-              message: `Success delete color with ID ${id}!`
-            })
+            return responseStandard(response, `Success delete color with ID ${id}!`, {})
           } else {
-            response.status(400).send({
-              success: false,
-              message: `Delete failed! ID ${id} not found`
-            })
+            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   }
 }
