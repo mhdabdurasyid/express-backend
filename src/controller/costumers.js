@@ -1,4 +1,5 @@
 const { addCostumerModel, getDetailCostumerModel, updateCostumerPartialModel, deleteCostumerModel } = require('../models/costumers')
+const responseStandard = require('../helpers/responses')
 
 module.exports = {
   addCostumer: (request, response) => {
@@ -7,26 +8,18 @@ module.exports = {
     if (email && password && name && phone && birthday && genderID) {
       addCostumerModel(request.body, (error, result) => {
         if (!error) {
-          response.send({
-            success: true,
-            message: 'Success add costumer',
+          return responseStandard(response, 'Success add new costumer', {
             data: {
               id: result.insertId,
               ...request.body
             }
           })
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Incomplete data on key & value'
-      })
+      return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
   },
   getDetailCostumer: (request, response) => {
@@ -37,29 +30,16 @@ module.exports = {
       getDetailCostumerModel(id, (error, result) => {
         if (!error) {
           if (result.length) {
-            response.send({
-              success: true,
-              message: 'Found a customer',
-              data: result
-            })
+            return responseStandard(response, 'Found a customer', { data: result })
           } else {
-            response.send({
-              success: false,
-              message: 'No data found'
-            })
+            return responseStandard(response, 'No data found', {}, 200, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   updateCostumerPartial: (request, response) => {
@@ -75,34 +55,19 @@ module.exports = {
         updateCostumerPartialModel(id, patchData, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
-              response.send({
-                success: true,
-                message: `Success update costumer with ID ${id}!`
-              })
+              return responseStandard(response, `Success update costumer with ID ${id}!`, {})
             } else {
-              response.status(400).send({
-                success: false,
-                message: `Update failed! ID ${id} not found`
-              })
+              return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
             }
           } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
+            return responseStandard(response, error.message, {}, 500, false)
           }
         })
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   deleteCostumer: (request, response) => {
@@ -113,28 +78,16 @@ module.exports = {
       deleteCostumerModel(id, (error, result) => {
         if (!error) {
           if (result.affectedRows) {
-            response.send({
-              success: true,
-              message: `Success delete costumer with ID ${id}!`
-            })
+            return responseStandard(response, `Success delete costumer with ID ${id}!`, {})
           } else {
-            response.status(400).send({
-              success: false,
-              message: `Delete failed! ID ${id} not found`
-            })
+            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   }
 }
