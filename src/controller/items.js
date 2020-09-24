@@ -1,5 +1,6 @@
 const qs = require('querystring')
 const { getDetailItemModel, addItemModel, updateItemModel, updatePartiallyItemModel, deleteItemModel, getItemsModel, countItemsModel } = require('../models/items')
+const responseStandard = require('../helpers/responses')
 
 module.exports = {
   getDetailItem: (request, response) => {
@@ -10,30 +11,16 @@ module.exports = {
       getDetailItemModel(id, (error, result) => {
         if (!error) {
           if (result.length) {
-            response.send({
-              success: true,
-              message: 'Found an item',
-              data: result
-            })
+            return responseStandard(response, 'Found an item', { data: result })
           } else {
-            response.send({
-              success: false,
-              message: 'No item found',
-              data: result
-            })
+            return responseStandard(response, 'No item found', { data: result }, 200, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   getItems: (request, response) => {
@@ -73,10 +60,7 @@ module.exports = {
     }
 
     if (Number.isNaN(page) || Number.isNaN(limit) || Math.sign(page) === -1 || Math.sign(limit) === -1 || Math.sign(page) === 0 || Math.sign(limit) === 0) {
-      response.status(400).send({
-        success: false,
-        message: 'Page or limit must be a positive number'
-      })
+      return responseStandard(response, 'Page or limit must be a positive number', {}, 400, false)
     } else {
       getItemsModel(searchKey, searchValue, page, limit, sortColumn, sortOption, (error, result) => {
         if (!error) {
@@ -105,24 +89,16 @@ module.exports = {
                 pageInfo.prevLink = `http://localhost:8080/item?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
               }
 
-              response.send({
-                success: true,
-                message: 'List of items',
+              return responseStandard(response, 'List of items', {
                 pageInfo,
                 data: result
               })
             })
           } else {
-            response.status(400).send({
-              success: false,
-              message: 'No data on this page'
-            })
+            return responseStandard(response, 'No data on this page', {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     }
@@ -134,32 +110,21 @@ module.exports = {
       if (request.body.stock > 0 && request.body.price > 0) {
         addItemModel(request.body, (error, result) => {
           if (!error) {
-            response.send({
-              success: true,
-              message: 'Success add item',
+            return responseStandard(response, 'Success add new item', {
               data: {
                 id: result.insertId,
                 ...request.body
               }
             })
           } else {
-            response.status(500).send({
-              success: false,
-              message: error.message
-            })
+            return responseStandard(response, error.message, {}, 500, false)
           }
         })
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Price & stock must be a positive integer'
-        })
+        return responseStandard(response, 'Price & stock must be a positive number', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Incomplete data on key & value'
-      })
+      return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
   },
   updateItem: (request, response) => {
@@ -174,40 +139,22 @@ module.exports = {
           updateItemModel(id, request.body, (error, result) => {
             if (!error) {
               if (result.affectedRows) {
-                response.send({
-                  success: true,
-                  message: `Success update item with ID ${id}!`
-                })
+                return responseStandard(response, `Success update item with ID ${id}!`, {})
               } else {
-                response.status(400).send({
-                  success: false,
-                  message: `Update failed! ID ${id} not found`
-                })
+                return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
               }
             } else {
-              response.status(500).send({
-                success: false,
-                message: error.message
-              })
+              return responseStandard(response, error.message, {}, 500, false)
             }
           })
         } else {
-          response.status(400).send({
-            success: false,
-            message: 'Price & stock must be a positive integer'
-          })
+          return responseStandard(response, 'Price & stock must be a positive number', {}, 400, false)
         }
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   updatePartiallyItem: (request, response) => {
@@ -219,45 +166,27 @@ module.exports = {
     if (typeof id === 'number' && !isNaN(id)) {
       if (name.trim() || price.trim() || description.trim() || stock.trim() || categoryID.trim() || conditionID.trim() || colorID.trim()) {
         if (request.body.stock < 0 || request.body.price <= 0) {
-          response.status(400).send({
-            success: false,
-            message: 'Price & stock must be a positive integer'
-          })
+          return responseStandard(response, 'Price & stock must be a positive number', {}, 400, false)
         } else {
           const patchData = Object.entries(request.body).map(el => Number(el[1]) ? `${el[0]} = ${el[1]}` : `${el[0]} = '${el[1].replace(/'/gi, "''")}'`).join(', ')
 
           updatePartiallyItemModel(id, patchData, (error, result) => {
             if (!error) {
               if (result.affectedRows) {
-                response.send({
-                  success: true,
-                  message: `Success update item with ID ${id}!`
-                })
+                return responseStandard(response, `Success update item with ID ${id}!`, {})
               } else {
-                response.status(400).send({
-                  success: false,
-                  message: `Update failed! ID ${id} not found`
-                })
+                return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
               }
             } else {
-              response.status(500).send({
-                success: false,
-                message: error.message
-              })
+              return responseStandard(response, error.message, {}, 500, false)
             }
           })
         }
       } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
   deleteItem: (request, response) => {
@@ -268,28 +197,16 @@ module.exports = {
       deleteItemModel(id, (error, result) => {
         if (!error) {
           if (result.affectedRows) {
-            response.send({
-              success: true,
-              message: 'Delete item success!'
-            })
+            return responseStandard(response, 'Delete item success', {})
           } else {
-            response.status(400).send({
-              success: false,
-              message: 'Delete failed! ID not found'
-            })
+            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
           }
         } else {
-          response.status(500).send({
-            success: false,
-            message: error.message
-          })
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
-      response.status(400).send({
-        success: false,
-        message: 'Invalid or bad ID'
-      })
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   }
 }
