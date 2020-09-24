@@ -1,6 +1,7 @@
 const qs = require('querystring')
 const { addCategoryModel, getCategoriesModel, updateCategoryModel, deleteCategoryModel, getDetailCategoryModel } = require('../models/categories')
 const { getItemsByColumn, countItemsByColumn } = require('../models/items')
+const upload = require('../helpers/upload')
 
 module.exports = {
   addCategory: (request, response) => {
@@ -55,41 +56,52 @@ module.exports = {
     })
   },
   updateCategory: (request, response) => {
+    const uploadImage = upload.single('image')
     let { id } = request.params
     id = Number(id)
 
-    const { name = '' } = request.body
-    const image = request.file
-    const pathImage = `/uploads/${image.filename}`
-
     if (typeof id === 'number' && !isNaN(id)) {
-      if (name.trim() && image) {
-        updateCategoryModel(id, name, pathImage, (error, result) => {
-          if (!error) {
-            if (result.affectedRows) {
-              response.send({
-                success: true,
-                message: `Success update category with ID ${id}!`
-              })
-            } else {
-              response.status(400).send({
-                success: false,
-                message: `Update failed! ID ${id} not found`
-              })
-            }
+      uploadImage(request, response, (error) => {
+        if (error) {
+          response.status(400).send({
+            success: false,
+            message: error.message
+          })
+        } else {
+          const image = request.file
+          const { name = '' } = request.body
+
+          if (name.trim() && image) {
+            const pathImage = `/uploads/${image.filename}`
+
+            updateCategoryModel(id, name, pathImage, (error, result) => {
+              if (!error) {
+                if (result.affectedRows) {
+                  response.send({
+                    success: true,
+                    message: `Success update category with ID ${id}!`
+                  })
+                } else {
+                  response.status(400).send({
+                    success: false,
+                    message: `Update failed! ID ${id} not found`
+                  })
+                }
+              } else {
+                response.status(500).send({
+                  success: false,
+                  message: error.message
+                })
+              }
+            })
           } else {
-            response.status(500).send({
+            response.status(400).send({
               success: false,
-              message: error.message
+              message: 'Update failed! Incomplete key & value'
             })
           }
-        })
-      } else {
-        response.status(400).send({
-          success: false,
-          message: 'Update failed! Incomplete key & value'
-        })
-      }
+        }
+      })
     } else {
       response.status(400).send({
         success: false,
