@@ -1,17 +1,25 @@
 const { addCostumerModel, getDetailCostumerModel, updateCostumerPartialModel, deleteCostumerModel } = require('../models/costumers')
 const responseStandard = require('../helpers/responses')
+const bcrypt = require('bcryptjs')
 
 module.exports = {
   addCostumer: (request, response) => {
     const { email, password, name, phone, birthday, genderID } = request.body
 
     if (email && password && name && phone && birthday && genderID) {
-      addCostumerModel(request.body, (error, result) => {
+      const salt = bcrypt.genSaltSync(10)
+      const hashedPassword = bcrypt.hashSync(password, salt)
+      const data = {
+        ...request.body,
+        password: hashedPassword
+      }
+
+      addCostumerModel(data, (error, result) => {
         if (!error) {
           return responseStandard(response, 'Success add new costumer', {
             data: {
               id: result.insertId,
-              ...request.body
+              ...data
             }
           })
         } else {
@@ -50,7 +58,14 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (email.trim() || password.trim() || name.trim() || phone.trim() || birthday.trim() || genderID.trim()) {
-        const patchData = Object.entries(request.body).map(el => `${el[0]} = '${el[1].replace(/'/gi, "''")}'`).join(', ')
+        const patchData = Object.entries(request.body).map(el => {
+          if (el[0] === 'password') {
+            const salt = bcrypt.genSaltSync(10)
+            const hashedPassword = bcrypt.hashSync(password, salt)
+            return `${el[0]} = '${hashedPassword}'`
+          }
+          return `${el[0]} = '${el[1].replace(/'/gi, "''")}'`
+        }).join(', ')
 
         updateCostumerPartialModel(id, patchData, (error, result) => {
           if (!error) {
