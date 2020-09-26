@@ -2,23 +2,26 @@ const qs = require('querystring')
 const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel, updateSellerPartialModel, deleteSellerModel, getDetailSellerModel } = require('../models/sellers')
 const { getItemsByColumn, countItemsByColumn } = require('../models/items')
 const responseStandard = require('../helpers/responses')
-// const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs')
 
 module.exports = {
   addSeller: (request, response) => {
     const { email, password, storeName, phone, storeDescription } = request.body
 
-    // const salt = bcrypt.genSaltSync(10)
-    // const hashedPassword = bcrypt.hashSync(password, salt)
-    // console.log(hashedPassword)
-
     if (email && password && storeName && phone && storeDescription) {
-      addSellerModel(request.body, (error, result) => {
+      const salt = bcrypt.genSaltSync(10)
+      const hashedPassword = bcrypt.hashSync(password, salt)
+      const data = {
+        ...request.body,
+        password: hashedPassword
+      }
+
+      addSellerModel(data, (error, result) => {
         if (!error) {
           return responseStandard(response, 'Success add new seller', {
             data: {
               id: result.insertId,
-              ...request.body
+              ...data
             }
           })
         } else {
@@ -104,7 +107,14 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (email.trim() && password.trim() && storeName.trim() && phone.trim() && storeDescription.trim()) {
-        updateSellerModel(id, request.body, (error, result) => {
+        const salt = bcrypt.genSaltSync(10)
+        const hashedPassword = bcrypt.hashSync(password, salt)
+        const data = {
+          ...request.body,
+          password: hashedPassword
+        }
+
+        updateSellerModel(id, data, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
               return responseStandard(response, `Success update seller with ID ${id}!`, {})
@@ -130,7 +140,14 @@ module.exports = {
 
     if (typeof id === 'number' && !isNaN(id)) {
       if (email.trim() || password.trim() || store_name.trim() || phone.trim() || store_description.trim()) {
-        const patchData = Object.entries(request.body).map(el => `${el[0]} = '${el[1].replace(/'/gi, "''")}'`).join(', ')
+        const patchData = Object.entries(request.body).map(el => {
+          if (el[0] === 'password') {
+            const salt = bcrypt.genSaltSync(10)
+            const hashedPassword = bcrypt.hashSync(password, salt)
+            return `${el[0]} = '${hashedPassword}'`
+          }
+          return `${el[0]} = '${el[1].replace(/'/gi, "''")}'`
+        }).join(', ')
 
         updateSellerPartialModel(id, patchData, (error, result) => {
           if (!error) {
