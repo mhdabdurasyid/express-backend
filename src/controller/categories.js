@@ -6,24 +6,37 @@ const responseStandard = require('../helpers/responses')
 
 module.exports = {
   addCategory: (request, response) => {
-    const { name } = request.body
+    const uploadImage = upload.single('image')
 
-    if (name) {
-      addCategoryModel(name, (error, result) => {
-        if (!error) {
-          return responseStandard(response, 'Success add new category', {
-            data: {
-              id: result.insertId,
-              ...request.body
+    uploadImage(request, response, (error) => {
+      if (error) {
+        return responseStandard(response, error.message, {}, 400, false)
+      } else {
+        const { name = '' } = request.body
+        const image = request.file
+        console.log(image)
+
+        if (name.trim() && image) {
+          const pathImage = `/uploads/${image.filename}`
+
+          addCategoryModel(name, pathImage, (error, result) => {
+            if (!error) {
+              return responseStandard(response, 'Success add new category', {
+                data: {
+                  id: result.insertId,
+                  ...request.body,
+                  img_url: pathImage
+                }
+              })
+            } else {
+              return responseStandard(response, error.message, {}, 500, false)
             }
           })
         } else {
-          return responseStandard(response, error.message, {}, 500, false)
+          return responseStandard(response, 'All field must be fill', {}, 400, false)
         }
-      })
-    } else {
-      return responseStandard(response, 'All field must be fill', {}, 400, false)
-    }
+      }
+    })
   },
   getCategories: (request, response) => {
     getCategoriesModel((error, result) => {

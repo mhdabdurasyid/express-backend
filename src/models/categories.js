@@ -2,8 +2,8 @@ const db = require('../helpers/db')
 const table = 'categories'
 
 module.exports = {
-  addCategoryModel: (name, cb) => {
-    db.query(`insert into ${table} (name) values ('${name.replace(/'/gi, "''")}')`, (error, result, fields) => {
+  addCategoryModel: (name, pathImage, cb) => {
+    db.query(`insert into ${table} (name, img_url) values ('${name.replace(/'/gi, "''")}', '${pathImage}')`, (error, result, fields) => {
       cb(error, result)
     })
   },
