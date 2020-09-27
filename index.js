@@ -8,6 +8,7 @@ const conditionsRouter = require('./src/routes/conditions')
 const sellersRouter = require('./src/routes/sellers')
 const costumersRouter = require('./src/routes/costumers')
 const cartsRouter = require('./src/routes/carts')
+const authRouter = require('./src/routes/auth')
 
 // enable CORS
 const cors = require('cors')
@@ -18,7 +19,7 @@ const app = express()
 app.use(cors())
 
 // import middleware
-// const authMidlleware = require('./src/middlewares/auth')
+const authMidlleware = require('./src/middlewares/auth')
 
 // configure express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -31,7 +32,8 @@ app.use('/color', colorsRouter)
 app.use('/condition', conditionsRouter)
 app.use('/seller', sellersRouter)
 app.use('/costumer', costumersRouter)
-app.use('/cart', cartsRouter)
+app.use('/cart', authMidlleware, cartsRouter)
+app.use('/auth', authRouter)
 
 // listening on port 8080
 app.listen(8080, () => {
