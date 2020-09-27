@@ -24,5 +24,10 @@ module.exports = {
     db.query(`delete from ${table} where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  customerLogin: (email, cb) => {
+    db.query(`select email, password from ${table} where email = '${email}'`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
