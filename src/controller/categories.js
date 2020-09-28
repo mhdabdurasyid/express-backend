@@ -14,7 +14,6 @@ module.exports = {
       } else {
         const { name = '' } = request.body
         const image = request.file
-        console.log(image)
 
         if (name.trim() && image) {
           const pathImage = `/uploads/${image.filename}`
