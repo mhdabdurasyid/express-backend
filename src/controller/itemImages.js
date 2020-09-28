@@ -1,4 +1,4 @@
-const { addItemImageModel, getItemImageModel } = require('../models/itemImages')
+const { addItemImageModel, getItemImageModel, updateItemImageModel } = require('../models/itemImages')
 const upload = require('../helpers/upload')
 const responseStandard = require('../helpers/responses')
 
@@ -49,6 +49,41 @@ module.exports = {
           }
         } else {
           return responseStandard(response, error.message, {}, 500, false)
+        }
+      })
+    } else {
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
+    }
+  },
+  updateItemImage: (request, response) => {
+    const uploadImage = upload.single('image')
+    let { id } = request.params
+    id = Number(id)
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      uploadImage(request, response, (error) => {
+        if (error) {
+          return responseStandard(response, error.message, {}, 400, false)
+        } else {
+          const image = request.file
+
+          if (image) {
+            const pathImage = `/uploads/${image.filename}`
+
+            updateItemImageModel(pathImage, id, (error, result) => {
+              if (!error) {
+                if (result.affectedRows) {
+                  return responseStandard(response, `Success update item image with ID ${id}!`, {})
+                } else {
+                  return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
+                }
+              } else {
+                return responseStandard(response, error.message, {}, 500, false)
+              }
+            })
+          } else {
+            return responseStandard(response, 'All field must be fill', {}, 400, false)
+          }
         }
       })
     } else {
