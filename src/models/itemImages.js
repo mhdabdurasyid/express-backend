@@ -6,5 +6,10 @@ module.exports = {
     db.query(`insert into ${table} (url, item_id) values ('${url}', ${id})`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  getItemImageModel: (id, cb) => {
+    db.query(`select * from ${table} where item_id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
