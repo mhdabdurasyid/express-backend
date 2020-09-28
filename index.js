@@ -9,6 +9,7 @@ const sellersRouter = require('./src/routes/sellers')
 const costumersRouter = require('./src/routes/costumers')
 const cartsRouter = require('./src/routes/carts')
 const authRouter = require('./src/routes/auth')
+const publicRouter = require('./src/routes/public')
 
 // enable CORS
 const cors = require('cors')
@@ -26,14 +27,16 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/uploads', express.static('assets/uploads'))
 
-app.use('/item', itemsRouter)
+app.use('/item', authMidlleware, itemsRouter)
 app.use('/category', authMidlleware, categoriesRouter)
 app.use('/color', authMidlleware, colorsRouter)
 app.use('/condition', authMidlleware, conditionsRouter)
-app.use('/seller', sellersRouter)
-app.use('/costumer', costumersRouter)
+app.use('/seller', authMidlleware, sellersRouter)
+app.use('/costumer', authMidlleware, costumersRouter)
 app.use('/cart', authMidlleware, cartsRouter)
+
 app.use('/auth', authRouter)
+app.use('/public', publicRouter)
 
 // listening on port 8080
 app.listen(8080, () => {
