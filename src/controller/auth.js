@@ -16,11 +16,11 @@ module.exports = {
           data = bcrypt.compareSync(password, result[0].password)
 
           if (data) {
-            jwt.sign({ id: data.id }, process.env.APP_KEY, (_error, token) => {
+            jwt.sign({ id: result[0].id }, process.env.APP_KEY, (_error, token) => {
               return responseStandard(response, 'Login success', { token })
             })
           } else {
-            return responseStandard(response, 'Wrong email or password', {}, 200, false)
+            return responseStandard(response, 'Wrong password', {}, 200, false)
           }
         } else {
           return responseStandard(response, 'Wrong email', {}, 200, false)
@@ -40,7 +40,7 @@ module.exports = {
           data = bcrypt.compareSync(password, result[0].password)
 
           if (data) {
-            jwt.sign({ id: data.id }, process.env.APP_KEY, (_error, token) => {
+            jwt.sign({ id: result[0].id }, process.env.APP_KEY, (_error, token) => {
               return responseStandard(response, 'Login success', { token })
             })
           } else {

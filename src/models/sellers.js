@@ -42,7 +42,7 @@ module.exports = {
     })
   },
   sellerLogin: (email, cb) => {
-    db.query(`select email, password from ${table} where email = '${email}'`, (error, result, fields) => {
+    db.query(`select id, email, password from ${table} where email = '${email}'`, (error, result, fields) => {
       cb(error, result)
     })
   }
