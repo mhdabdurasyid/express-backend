@@ -16,5 +16,10 @@ module.exports = {
     db.query(`update ${table} set url = '${url}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  deleteItemImageModel: (id, cb) => {
+    db.query(`delete from ${table} where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }

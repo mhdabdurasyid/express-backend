@@ -1,4 +1,4 @@
-const { addItemImageModel, getItemImageModel, updateItemImageModel } = require('../models/itemImages')
+const { addItemImageModel, getItemImageModel, updateItemImageModel, deleteItemImageModel } = require('../models/itemImages')
 const upload = require('../helpers/upload')
 const responseStandard = require('../helpers/responses')
 
@@ -84,6 +84,26 @@ module.exports = {
           } else {
             return responseStandard(response, 'All field must be fill', {}, 400, false)
           }
+        }
+      })
+    } else {
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
+    }
+  },
+  deleteItemImage: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      deleteItemImageModel(id, (error, result) => {
+        if (!error) {
+          if (result.affectedRows) {
+            return responseStandard(response, `Success delete item image with ID ${id}!`, {})
+          } else {
+            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
+          }
+        } else {
+          return responseStandard(response, error.message, {}, 500, false)
         }
       })
     } else {
