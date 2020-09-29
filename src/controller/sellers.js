@@ -187,7 +187,7 @@ module.exports = {
       return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
   },
-  getDetailSeller: (request, response) => {
+  getItemSeller: (request, response) => {
     let { id } = request.params
     id = Number(id)
 
