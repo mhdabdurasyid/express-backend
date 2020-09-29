@@ -3,6 +3,8 @@ const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel, u
 const { getItemsByColumn, countItemsByColumn } = require('../models/items')
 const responseStandard = require('../helpers/responses')
 const bcrypt = require('bcryptjs')
+const upload = require('../helpers/upload')
+const fs = require('fs')
 
 module.exports = {
   addSeller: (request, response) => {
@@ -100,27 +102,48 @@ module.exports = {
     }
   },
   updateSeller: (request, response) => {
+    const uploadImage = upload.single('image')
     let { id } = request.params
     id = Number(id)
 
-    const { email = '', storeName = '', phone = '', storeDescription = '' } = request.body
-
     if (typeof id === 'number' && !isNaN(id)) {
-      if (email.trim() && storeName.trim() && phone.trim() && storeDescription.trim()) {
-        updateSellerModel(id, request.body, (error, result) => {
-          if (!error) {
-            if (result.affectedRows) {
-              return responseStandard(response, `Success update seller with ID ${id}!`, {})
-            } else {
-              return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
-            }
+      getDetailSellerModel(id, (err, res) => {
+        if (!err) {
+          if (res.length) {
+            uploadImage(request, response, (error) => {
+              if (error) {
+                return responseStandard(response, error.message, {}, 400, false)
+              } else {
+                const image = request.file
+                const { email = '', storeName = '', phone = '', storeDescription = '' } = request.body
+
+                if (email.trim() && storeName.trim() && phone.trim() && storeDescription.trim() && image) {
+                  const pathImage = `/uploads/${image.filename}`
+
+                  updateSellerModel(id, request.body, pathImage, (error, result) => {
+                    if (!error) {
+                      if (result.affectedRows) {
+                        fs.unlinkSync(`assets/${res[0].store_photo}`)
+                        return responseStandard(response, `Success update seller with ID ${id}!`, {})
+                      } else {
+                        return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
+                      }
+                    } else {
+                      return responseStandard(response, error.message, {}, 500, false)
+                    }
+                  })
+                } else {
+                  return responseStandard(response, 'All field must be fill', {}, 400, false)
+                }
+              }
+            })
           } else {
-            return responseStandard(response, error.message, {}, 500, false)
+            return responseStandard(response, 'No data found', {}, 200, false)
           }
-        })
-      } else {
-        return responseStandard(response, 'All field must be fill', {}, 400, false)
-      }
+        } else {
+          return responseStandard(response, err.message, {}, 500, false)
+        }
+      })
     } else {
       return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }

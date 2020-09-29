@@ -19,10 +19,10 @@ module.exports = {
       cb(result)
     })
   },
-  updateSellerModel: (id, data, cb) => {
+  updateSellerModel: (id, data, image, cb) => {
     const { email, storeName, phone, storeDescription } = data
 
-    db.query(`update ${table} set email = '${email.replace(/'/gi, "''")}', store_name = '${storeName.replace(/'/gi, "''")}', phone = '${phone.replace(/'/gi, "''")}', store_description = '${storeDescription.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
+    db.query(`update ${table} set email = '${email.replace(/'/gi, "''")}', store_name = '${storeName.replace(/'/gi, "''")}', phone = '${phone.replace(/'/gi, "''")}', store_description = '${storeDescription.replace(/'/gi, "''")}', store_photo = '${image}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
   },
