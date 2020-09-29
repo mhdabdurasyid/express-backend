@@ -6,9 +6,9 @@ const bcrypt = require('bcryptjs')
 
 module.exports = {
   addSeller: (request, response) => {
-    const { email, password, storeName, phone, storeDescription } = request.body
+    const { email, password, storeName, phone } = request.body
 
-    if (email && password && storeName && phone && storeDescription) {
+    if (email && password && storeName && phone) {
       const salt = bcrypt.genSaltSync(10)
       const hashedPassword = bcrypt.hashSync(password, salt)
       const data = {
