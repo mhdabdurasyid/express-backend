@@ -123,7 +123,9 @@ module.exports = {
                   updateSellerModel(id, request.body, pathImage, (error, result) => {
                     if (!error) {
                       if (result.affectedRows) {
-                        fs.unlinkSync(`assets/${res[0].store_photo}`)
+                        if (res[0].store_photo !== '') {
+                          fs.unlinkSync(`assets/${res[0].store_photo}`)
+                        }
                         return responseStandard(response, `Success update seller with ID ${id}!`, {})
                       } else {
                         return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
