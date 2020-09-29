@@ -1,4 +1,4 @@
-const { addShippingAddressModel, getDetailShippingAddressModel, updateShippingAddressModel } = require('../models/shippingAddress')
+const { addShippingAddressModel, getDetailShippingAddressModel, updateShippingAddressModel, deleteShippingAddressModel } = require('../models/shippingAddress')
 const responseStandard = require('../helpers/responses')
 
 module.exports = {
@@ -64,6 +64,26 @@ module.exports = {
       } else {
         return responseStandard(response, 'All field must be fill', {}, 400, false)
       }
+    } else {
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
+    }
+  },
+  deleteShippingAddress: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      deleteShippingAddressModel(id, (error, result) => {
+        if (!error) {
+          if (result.affectedRows) {
+            return responseStandard(response, 'Delete shipping address success', {})
+          } else {
+            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
+          }
+        } else {
+          return responseStandard(response, error.message, {}, 500, false)
+        }
+      })
     } else {
       return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }

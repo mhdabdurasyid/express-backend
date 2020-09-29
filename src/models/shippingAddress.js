@@ -25,5 +25,10 @@ module.exports = {
     postal_code = '${postalCode}', primary_address = ${primaryAddress} where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  deleteShippingAddressModel: (id, cb) => {
+    db.query(`delete from ${table} where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
