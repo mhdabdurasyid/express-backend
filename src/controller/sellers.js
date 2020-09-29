@@ -151,36 +151,61 @@ module.exports = {
     }
   },
   updateSellerPartial: (request, response) => {
+    const uploadImage = upload.single('image')
     let { id } = request.params
     id = Number(id)
 
-    const { email = '', password = '', store_name = '', phone = '', store_description = '' } = request.body
-
     if (typeof id === 'number' && !isNaN(id)) {
-      if (email.trim() || password.trim() || store_name.trim() || phone.trim() || store_description.trim()) {
-        const patchData = Object.entries(request.body).map(el => {
-          if (el[0] === 'password') {
-            const salt = bcrypt.genSaltSync(10)
-            const hashedPassword = bcrypt.hashSync(password, salt)
-            return `${el[0]} = '${hashedPassword}'`
-          }
-          return `${el[0]} = '${el[1].replace(/'/gi, "''")}'`
-        }).join(', ')
+      getDetailSellerModel(id, (err, res) => {
+        if (!err) {
+          if (res.length) {
+            uploadImage(request, response, (error) => {
+              if (error) {
+                return responseStandard(response, error.message, {}, 400, false)
+              } else {
+                const image = request.file
+                const { email = '', password = '', store_name = '', phone = '', store_description = '' } = request.body
 
-        updateSellerPartialModel(id, patchData, (error, result) => {
-          if (!error) {
-            if (result.affectedRows) {
-              return responseStandard(response, `Success update seller with ID ${id}!`, {})
-            } else {
-              return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
-            }
+                if (email.trim() || password.trim() || store_name.trim() || phone.trim() || store_description.trim() || image) {
+                  const patchData = Object.entries(request.body).map(el => {
+                    if (el[0] === 'password') {
+                      const salt = bcrypt.genSaltSync(10)
+                      const hashedPassword = bcrypt.hashSync(password, salt)
+                      return `${el[0]} = '${hashedPassword}'`
+                    }
+                    return `${el[0]} = '${el[1].replace(/'/gi, "''")}'`
+                  })
+
+                  if (image) {
+                    patchData.push(`store_photo = '/uploads/${image.filename}'`)
+                  }
+
+                  updateSellerPartialModel(id, patchData, (error, result) => {
+                    if (!error) {
+                      if (result.affectedRows) {
+                        if (res[0].store_photo !== '') {
+                          fs.unlinkSync(`assets/${res[0].store_photo}`)
+                        }
+                        return responseStandard(response, `Success update seller with ID ${id}!`, {})
+                      } else {
+                        return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
+                      }
+                    } else {
+                      return responseStandard(response, error.message, {}, 500, false)
+                    }
+                  })
+                } else {
+                  return responseStandard(response, 'All field must be fill', {}, 400, false)
+                }
+              }
+            })
           } else {
-            return responseStandard(response, error.message, {}, 500, false)
+            return responseStandard(response, 'No data found', {}, 200, false)
           }
-        })
-      } else {
-        return responseStandard(response, 'All field must be fill', {}, 400, false)
-      }
+        } else {
+          return responseStandard(response, err.message, {}, 500, false)
+        }
+      })
     } else {
       return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
