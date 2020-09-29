@@ -292,5 +292,25 @@ module.exports = {
     } else {
       return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
+  },
+  getDetailSeller: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      getDetailSellerModel(id, (error, result) => {
+        if (!error) {
+          if (result.length) {
+            return responseStandard(response, 'Found a seller', { data: result })
+          } else {
+            return responseStandard(response, 'No data found', { data: result }, 200, false)
+          }
+        } else {
+          return responseStandard(response, error.message, {}, 500, false)
+        }
+      })
+    } else {
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
+    }
   }
 }
