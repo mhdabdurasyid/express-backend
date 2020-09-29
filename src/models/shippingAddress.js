@@ -10,5 +10,11 @@ module.exports = {
     '${city.replace(/'/gi, "''")}', '${postalCode}', ${primaryAddress}, ${costumerID})`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  getDetailShippingAddressModel: (id, cb) => {
+    db.query(`select recipient_name, recipient_phone, address_name, concat(address, ", ", city, ", ", postal_code) as full_address, primary_address
+    from ${table} where costumer_id = '${id}'`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
