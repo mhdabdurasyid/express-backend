@@ -10,7 +10,7 @@ module.exports = {
     })
   },
   getDetailCostumerModel: (id, cb) => {
-    db.query(`select ${table}.id, email, password, ${table}.name, phone, birthday, genders.name as gender
+    db.query(`select ${table}.id, email, ${table}.name, phone, birthday, genders.name as gender
     from ${table} join genders on gender_id = genders.id where ${table}.id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
