@@ -1,11 +1,11 @@
 const { Router } = require('express')
-const { addShippingAddress, getDetailShippingAddress } = require('../controller/shippingAddress')
+const { addShippingAddress, getDetailShippingAddress, updateShippingAddress } = require('../controller/shippingAddress')
 
 const router = Router()
 
 router.post('/', addShippingAddress)
 router.get('/:id', getDetailShippingAddress)
-// router.put('/:id', updateShippingAddress)
+router.put('/:id', updateShippingAddress)
 // router.delete('/:id', deleteShippingAddress)
 
 module.exports = router

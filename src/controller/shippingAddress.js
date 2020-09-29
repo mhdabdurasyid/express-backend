@@ -1,4 +1,4 @@
-const { addShippingAddressModel, getDetailShippingAddressModel } = require('../models/shippingAddress')
+const { addShippingAddressModel, getDetailShippingAddressModel, updateShippingAddressModel } = require('../models/shippingAddress')
 const responseStandard = require('../helpers/responses')
 
 module.exports = {
@@ -38,6 +38,32 @@ module.exports = {
           return responseStandard(response, error.message, {}, 500, false)
         }
       })
+    } else {
+      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
+    }
+  },
+  updateShippingAddress: (request, response) => {
+    let { id } = request.params
+    id = Number(id)
+
+    const { addressName, address, recipientName, recipientPhone, city, postalCode, primaryAddress } = request.body
+
+    if (typeof id === 'number' && !isNaN(id)) {
+      if (addressName && address && recipientName && recipientPhone && city && postalCode && primaryAddress) {
+        updateShippingAddressModel(id, request.body, (error, result) => {
+          if (!error) {
+            if (result.affectedRows) {
+              return responseStandard(response, `Success update shipping address with ID ${id}!`, {})
+            } else {
+              return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
+            }
+          } else {
+            return responseStandard(response, error.message, {}, 500, false)
+          }
+        })
+      } else {
+        return responseStandard(response, 'All field must be fill', {}, 400, false)
+      }
     } else {
       return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
