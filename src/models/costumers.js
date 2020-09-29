@@ -3,9 +3,9 @@ const table = 'costumers'
 
 module.exports = {
   addCostumerModel: (data, cb) => {
-    const { email, password, name, phone, birthday, genderID } = data
+    const { email, password, name } = data
 
-    db.query(`insert into ${table} (email, password, name, phone, birthday, gender_id) values ('${email.replace(/'/gi, "''")}', '${password.replace(/'/gi, "''")}', '${name.replace(/'/gi, "''")}', '${phone.replace(/'/gi, "''")}', '${birthday}', ${genderID})`, (error, result, fields) => {
+    db.query(`insert into ${table} (email, password, name) values ('${email.replace(/'/gi, "''")}', '${password}', '${name.replace(/'/gi, "''")}')`, (error, result, fields) => {
       cb(error, result)
     })
   },
