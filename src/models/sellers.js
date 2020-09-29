@@ -20,9 +20,9 @@ module.exports = {
     })
   },
   updateSellerModel: (id, data, cb) => {
-    const { email, password, storeName, phone, storeDescription } = data
+    const { email, storeName, phone, storeDescription } = data
 
-    db.query(`update ${table} set email = '${email.replace(/'/gi, "''")}', password = '${password.replace(/'/gi, "''")}', store_name = '${storeName.replace(/'/gi, "''")}', phone = '${phone.replace(/'/gi, "''")}', store_description = '${storeDescription.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
+    db.query(`update ${table} set email = '${email.replace(/'/gi, "''")}', store_name = '${storeName.replace(/'/gi, "''")}', phone = '${phone.replace(/'/gi, "''")}', store_description = '${storeDescription.replace(/'/gi, "''")}' where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
   },

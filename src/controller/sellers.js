@@ -103,18 +103,11 @@ module.exports = {
     let { id } = request.params
     id = Number(id)
 
-    const { email = '', password = '', storeName = '', phone = '', storeDescription = '' } = request.body
+    const { email = '', storeName = '', phone = '', storeDescription = '' } = request.body
 
     if (typeof id === 'number' && !isNaN(id)) {
-      if (email.trim() && password.trim() && storeName.trim() && phone.trim() && storeDescription.trim()) {
-        const salt = bcrypt.genSaltSync(10)
-        const hashedPassword = bcrypt.hashSync(password, salt)
-        const data = {
-          ...request.body,
-          password: hashedPassword
-        }
-
-        updateSellerModel(id, data, (error, result) => {
+      if (email.trim() && storeName.trim() && phone.trim() && storeDescription.trim()) {
+        updateSellerModel(id, request.body, (error, result) => {
           if (!error) {
             if (result.affectedRows) {
               return responseStandard(response, `Success update seller with ID ${id}!`, {})
