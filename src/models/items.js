@@ -32,7 +32,8 @@ module.exports = {
     })
   },
   getItemsModel: (searchKey, searchValue, page, limit, sortColumn, sortOption, cb) => {
-    db.query(`select items.id, items.name, price, description, stock, created_at, modified_at, categories.name as category, conditions.name as conditions, colors.name as color, store_name 
+    db.query(`select items.id, items.name, price, description, stock, created_at, modified_at, categories.name as category, conditions.name as conditions, colors.name as color, store_name,
+    (select url from item_images where item_id = ${table}.id limit 1) as img_thumbnail
     from ${table} join categories on items.category_id = categories.id 
     join conditions on items.condition_id = conditions.id 
     join colors on items.color_id = colors.id 
