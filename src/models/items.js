@@ -4,7 +4,14 @@ const table = 'items'
 module.exports = {
   getDetailItemModel: (id, cb) => {
     db.query(`select ${table}.id, ${table}.name, categories.name as category, store_name, price, colors.name as color, stock, conditions.name as conditions, description,
-    (SELECT GROUP_CONCAT(url) FROM item_images where item_id = ${table}.id) as images, category_id
+    (SELECT GROUP_CONCAT(url) FROM item_images where item_id = ${table}.id) as images, category_id,
+    (select if(round(avg(star), 1), round(avg(star), 1), 0) from item_reviews where item_id = ${table}.id) as rating,
+    (select count(star) from item_reviews where item_id = ${table}.id) as count_review,
+    (select count(star) from item_reviews where item_id = ${table}.id and star = 5) as count_5_star,
+    (select count(star) from item_reviews where item_id = ${table}.id and star = 4) as count_4_star,
+    (select count(star) from item_reviews where item_id = ${table}.id and star = 3) as count_3_star,
+    (select count(star) from item_reviews where item_id = ${table}.id and star = 2) as count_2_star,
+    (select count(star) from item_reviews where item_id = ${table}.id and star = 1) as count_1_star
     from ${table} join categories on ${table}.category_id = categories.id 
     join conditions on ${table}.condition_id = conditions.id 
     join colors on ${table}.color_id = colors.id 
