@@ -103,112 +103,102 @@ module.exports = {
   },
   updateSeller: (request, response) => {
     const uploadImage = upload.single('image')
-    let { id } = request.params
-    id = Number(id)
+    const { id } = request.user
 
-    if (typeof id === 'number' && !isNaN(id)) {
-      getDetailSellerModel(id, (err, res) => {
-        if (!err) {
-          if (res.length) {
-            uploadImage(request, response, (error) => {
-              if (error) {
-                return responseStandard(response, error.message, {}, 400, false)
-              } else {
-                const image = request.file
-                const { email = '', storeName = '', phone = '', storeDescription = '' } = request.body
+    getDetailSellerModel(id, (err, res) => {
+      if (!err) {
+        if (res.length) {
+          uploadImage(request, response, (error) => {
+            if (error) {
+              return responseStandard(response, error.message, {}, 400, false)
+            } else {
+              const image = request.file
+              const { email = '', storeName = '', phone = '', storeDescription = '' } = request.body
 
-                if (email.trim() && storeName.trim() && phone.trim() && storeDescription.trim() && image) {
-                  const pathImage = `/uploads/${image.filename}`
+              if (email.trim() && storeName.trim() && phone.trim() && storeDescription.trim() && image) {
+                const pathImage = `/uploads/${image.filename}`
 
-                  updateSellerModel(id, request.body, pathImage, (error, result) => {
-                    if (!error) {
-                      if (result.affectedRows) {
-                        if (res[0].store_photo !== '') {
-                          fs.unlinkSync(`assets/${res[0].store_photo}`)
-                        }
-                        return responseStandard(response, `Success update seller with ID ${id}!`, {})
-                      } else {
-                        return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
+                updateSellerModel(id, request.body, pathImage, (error, result) => {
+                  if (!error) {
+                    if (result.affectedRows) {
+                      if (res[0].store_photo !== '') {
+                        fs.unlinkSync(`assets/${res[0].store_photo}`)
                       }
+                      return responseStandard(response, `Success update seller with ID ${id}!`, {})
                     } else {
-                      return responseStandard(response, error.message, {}, 500, false)
+                      return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
                     }
-                  })
-                } else {
-                  return responseStandard(response, 'All field must be fill', {}, 400, false)
-                }
+                  } else {
+                    return responseStandard(response, error.message, {}, 500, false)
+                  }
+                })
+              } else {
+                return responseStandard(response, 'All field must be fill', {}, 400, false)
               }
-            })
-          } else {
-            return responseStandard(response, 'No data found', {}, 200, false)
-          }
+            }
+          })
         } else {
-          return responseStandard(response, err.message, {}, 500, false)
+          return responseStandard(response, 'No data found', {}, 200, false)
         }
-      })
-    } else {
-      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
-    }
+      } else {
+        return responseStandard(response, err.message, {}, 500, false)
+      }
+    })
   },
   updateSellerPartial: (request, response) => {
     const uploadImage = upload.single('image')
-    let { id } = request.params
-    id = Number(id)
+    const { id } = request.user
 
-    if (typeof id === 'number' && !isNaN(id)) {
-      getDetailSellerModel(id, (err, res) => {
-        if (!err) {
-          if (res.length) {
-            uploadImage(request, response, (error) => {
-              if (error) {
-                return responseStandard(response, error.message, {}, 400, false)
-              } else {
-                const image = request.file
-                const { email = '', password = '', store_name = '', phone = '', store_description = '' } = request.body
+    getDetailSellerModel(id, (err, res) => {
+      if (!err) {
+        if (res.length) {
+          uploadImage(request, response, (error) => {
+            if (error) {
+              return responseStandard(response, error.message, {}, 400, false)
+            } else {
+              const image = request.file
+              const { email = '', password = '', store_name = '', phone = '', store_description = '' } = request.body
 
-                if (email.trim() || password.trim() || store_name.trim() || phone.trim() || store_description.trim() || image) {
-                  const patchData = Object.entries(request.body).map(el => {
-                    if (el[0] === 'password') {
-                      const salt = bcrypt.genSaltSync(10)
-                      const hashedPassword = bcrypt.hashSync(password, salt)
-                      return `${el[0]} = '${hashedPassword}'`
-                    }
-                    return `${el[0]} = '${el[1].replace(/'/gi, "''")}'`
-                  })
-
-                  if (image) {
-                    patchData.push(`store_photo = '/uploads/${image.filename}'`)
+              if (email.trim() || password.trim() || store_name.trim() || phone.trim() || store_description.trim() || image) {
+                const patchData = Object.entries(request.body).map(el => {
+                  if (el[0] === 'password') {
+                    const salt = bcrypt.genSaltSync(10)
+                    const hashedPassword = bcrypt.hashSync(password, salt)
+                    return `${el[0]} = '${hashedPassword}'`
                   }
+                  return `${el[0]} = '${el[1].replace(/'/gi, "''")}'`
+                })
 
-                  updateSellerPartialModel(id, patchData, (error, result) => {
-                    if (!error) {
-                      if (result.affectedRows) {
-                        if (res[0].store_photo !== '') {
-                          fs.unlinkSync(`assets/${res[0].store_photo}`)
-                        }
-                        return responseStandard(response, `Success update seller with ID ${id}!`, {})
-                      } else {
-                        return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
-                      }
-                    } else {
-                      return responseStandard(response, error.message, {}, 500, false)
-                    }
-                  })
-                } else {
-                  return responseStandard(response, 'All field must be fill', {}, 400, false)
+                if (image) {
+                  patchData.push(`store_photo = '/uploads/${image.filename}'`)
                 }
+
+                updateSellerPartialModel(id, patchData, (error, result) => {
+                  if (!error) {
+                    if (result.affectedRows) {
+                      if (res[0].store_photo !== '') {
+                        fs.unlinkSync(`assets/${res[0].store_photo}`)
+                      }
+                      return responseStandard(response, `Success update seller with ID ${id}!`, {})
+                    } else {
+                      return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
+                    }
+                  } else {
+                    return responseStandard(response, error.message, {}, 500, false)
+                  }
+                })
+              } else {
+                return responseStandard(response, 'All field must be fill', {}, 400, false)
               }
-            })
-          } else {
-            return responseStandard(response, 'No data found', {}, 200, false)
-          }
+            }
+          })
         } else {
-          return responseStandard(response, err.message, {}, 500, false)
+          return responseStandard(response, 'No data found', {}, 200, false)
         }
-      })
-    } else {
-      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
-    }
+      } else {
+        return responseStandard(response, err.message, {}, 500, false)
+      }
+    })
   },
   deleteSeller: (request, response) => {
     let { id } = request.params
@@ -231,8 +221,7 @@ module.exports = {
     }
   },
   getItemSeller: (request, response) => {
-    let { id } = request.params
-    id = Number(id)
+    const { id } = request.user
 
     let { page, limit, search, sort } = request.query
 
@@ -269,82 +258,60 @@ module.exports = {
       page = parseInt(page)
     }
 
-    if (typeof id === 'number' && !isNaN(id)) {
-      if (Number.isNaN(page) || Number.isNaN(limit) || Math.sign(page) === -1 || Math.sign(limit) === -1 || Math.sign(page) === 0 || Math.sign(limit) === 0) {
-        return responseStandard(response, 'Page or limit must be a postive number', {}, 400, false)
-      } else {
-        getDetailSellerModel(id, (error, result) => {
-          if (!error) {
-            if (result.length) {
-              getItemsByColumn(searchKey, searchValue, page, limit, sortColumn, sortOption, 'seller_id', result[0].id, (err, items) => {
-                if (!err) {
-                  const pageInfo = {
-                    count: 0,
-                    pages: 0,
-                    currentPage: page,
-                    limitPerPage: limit,
-                    nextLink: null,
-                    prevLink: null
-                  }
-
-                  if (items.length) {
-                    countItemsByColumn(searchKey, searchValue, 'seller_id', result[0].id, (data) => {
-                      const { count } = data[0]
-                      pageInfo.count = count
-                      pageInfo.pages = Math.ceil(count / limit)
-
-                      const { pages, currentPage } = pageInfo
-
-                      if (currentPage < pages) {
-                        pageInfo.nextLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
-                      }
-
-                      if (currentPage > 1) {
-                        pageInfo.prevLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
-                      }
-
-                      return responseStandard(response, 'Found a seller', {
-                        pageInfo,
-                        data: {
-                          seller: result,
-                          items: items
-                        }
-                      })
-                    })
-                  } else {
-                    return responseStandard(response, 'No data on this page', {
-                      pageInfo,
-                      data: {
-                        seller: {},
-                        items: {}
-                      }
-                    }, 200, false)
-                  }
-                } else {
-                  return responseStandard(response, error.message, {}, 500, false)
-                }
-              })
-            } else {
-              return responseStandard(response, 'No data found', { data: result }, 200, false)
-            }
-          } else {
-            return responseStandard(response, error.message, {}, 500, false)
-          }
-        })
-      }
+    if (Number.isNaN(page) || Number.isNaN(limit) || Math.sign(page) === -1 || Math.sign(limit) === -1 || Math.sign(page) === 0 || Math.sign(limit) === 0) {
+      return responseStandard(response, 'Page or limit must be a postive number', {}, 400, false)
     } else {
-      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
-    }
-  },
-  getDetailSeller: (request, response) => {
-    let { id } = request.params
-    id = Number(id)
-
-    if (typeof id === 'number' && !isNaN(id)) {
       getDetailSellerModel(id, (error, result) => {
         if (!error) {
           if (result.length) {
-            return responseStandard(response, 'Found a seller', { data: result })
+            getItemsByColumn(searchKey, searchValue, page, limit, sortColumn, sortOption, 'seller_id', result[0].id, (err, items) => {
+              if (!err) {
+                const pageInfo = {
+                  count: 0,
+                  pages: 0,
+                  currentPage: page,
+                  limitPerPage: limit,
+                  nextLink: null,
+                  prevLink: null
+                }
+
+                if (items.length) {
+                  countItemsByColumn(searchKey, searchValue, 'seller_id', result[0].id, (data) => {
+                    const { count } = data[0]
+                    pageInfo.count = count
+                    pageInfo.pages = Math.ceil(count / limit)
+
+                    const { pages, currentPage } = pageInfo
+
+                    if (currentPage < pages) {
+                      pageInfo.nextLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                    }
+
+                    if (currentPage > 1) {
+                      pageInfo.prevLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                    }
+
+                    return responseStandard(response, 'Found a seller', {
+                      pageInfo,
+                      data: {
+                        seller: result,
+                        items: items
+                      }
+                    })
+                  })
+                } else {
+                  return responseStandard(response, 'No data on this page', {
+                    pageInfo,
+                    data: {
+                      seller: {},
+                      items: {}
+                    }
+                  }, 200, false)
+                }
+              } else {
+                return responseStandard(response, error.message, {}, 500, false)
+              }
+            })
           } else {
             return responseStandard(response, 'No data found', { data: result }, 200, false)
           }
@@ -352,8 +319,21 @@ module.exports = {
           return responseStandard(response, error.message, {}, 500, false)
         }
       })
-    } else {
-      return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
+  },
+  getDetailSeller: (request, response) => {
+    const { id } = request.user
+
+    getDetailSellerModel(id, (error, result) => {
+      if (!error) {
+        if (result.length) {
+          return responseStandard(response, 'Found a seller', { data: result })
+        } else {
+          return responseStandard(response, 'No data found', { data: result }, 200, false)
+        }
+      } else {
+        return responseStandard(response, error.message, {}, 500, false)
+      }
+    })
   }
 }
