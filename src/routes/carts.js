@@ -3,9 +3,9 @@ const { addCart, updateCartPartial, deleteCart, getDetailCart } = require('../co
 
 const router = Router()
 
-router.get('/:costumerID', getDetailCart)
+router.get('/', getDetailCart)
 router.post('/', addCart)
-router.patch('/:costumerID/:itemID', updateCartPartial)
-router.delete('/:costumerID/:itemID', deleteCart)
+router.patch('/:itemID', updateCartPartial)
+router.delete('/:itemID', deleteCart)
 
 module.exports = router
