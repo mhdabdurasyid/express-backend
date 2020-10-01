@@ -1,6 +1,7 @@
-const { addItemImageModel, getItemImageModel, updateItemImageModel, deleteItemImageModel } = require('../models/itemImages')
+const { addItemImageModel, getItemImageModel, updateItemImageModel, deleteItemImageModel, getItemImageByID } = require('../models/itemImages')
 const upload = require('../helpers/upload')
 const responseStandard = require('../helpers/responses')
+const fs = require('fs')
 
 module.exports = {
   addItemImage: (request, response) => {
@@ -95,15 +96,26 @@ module.exports = {
     id = Number(id)
 
     if (typeof id === 'number' && !isNaN(id)) {
-      deleteItemImageModel(id, (error, result) => {
-        if (!error) {
-          if (result.affectedRows) {
-            return responseStandard(response, `Success delete item image with ID ${id}!`, {})
+      getItemImageByID(id, (err, res) => {
+        if (!err) {
+          if (res.length) {
+            deleteItemImageModel(id, (error, result) => {
+              if (!error) {
+                if (result.affectedRows) {
+                  fs.unlinkSync(`assets/${res[0].url}`)
+                  return responseStandard(response, `Success delete item image with ID ${id}!`, {})
+                } else {
+                  return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
+                }
+              } else {
+                return responseStandard(response, error.message, {}, 500, false)
+              }
+            })
           } else {
-            return responseStandard(response, `Delete failed! ID ${id} not found`, {}, 400, false)
+            return responseStandard(response, 'No item image found', {}, 200, false)
           }
         } else {
-          return responseStandard(response, error.message, {}, 500, false)
+          return responseStandard(response, err.message, {}, 500, false)
         }
       })
     } else {

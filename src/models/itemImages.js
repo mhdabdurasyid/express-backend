@@ -21,5 +21,10 @@ module.exports = {
     db.query(`delete from ${table} where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  getItemImageByID: (id, cb) => {
+    db.query(`select * from ${table} where id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }
