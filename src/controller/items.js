@@ -104,16 +104,21 @@ module.exports = {
     }
   },
   addItem: (request, response) => {
-    const { name, price, description, stock, categoryID, conditionID, colorID, sellerID } = request.body
+    const { name, price, description, stock, categoryID, conditionID, colorID } = request.body
 
-    if (name && price && description && stock && categoryID && conditionID && colorID && sellerID) {
+    if (name && price && description && stock && categoryID && conditionID && colorID) {
       if (request.body.stock > 0 && request.body.price > 0) {
-        addItemModel(request.body, (error, result) => {
+        const data = {
+          ...request.body,
+          sellerID: request.user.id
+        }
+
+        addItemModel(data, (error, result) => {
           if (!error) {
             return responseStandard(response, 'Success add new item', {
               data: {
                 id: result.insertId,
-                ...request.body
+                ...data
               }
             })
           } else {
