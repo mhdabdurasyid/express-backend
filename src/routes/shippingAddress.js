@@ -4,7 +4,7 @@ const { addShippingAddress, getDetailShippingAddress, updateShippingAddress, del
 const router = Router()
 
 router.post('/', addShippingAddress)
-router.get('/:id', getDetailShippingAddress)
+router.get('/', getDetailShippingAddress)
 router.put('/:id', updateShippingAddress)
 router.delete('/:id', deleteShippingAddress)
 
