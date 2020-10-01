@@ -62,29 +62,40 @@ module.exports = {
     id = Number(id)
 
     if (typeof id === 'number' && !isNaN(id)) {
-      uploadImage(request, response, (error) => {
-        if (error) {
-          return responseStandard(response, error.message, {}, 400, false)
-        } else {
-          const image = request.file
-
-          if (image) {
-            const pathImage = `/uploads/${image.filename}`
-
-            updateItemImageModel(pathImage, id, (error, result) => {
-              if (!error) {
-                if (result.affectedRows) {
-                  return responseStandard(response, `Success update item image with ID ${id}!`, {})
-                } else {
-                  return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
-                }
+      getItemImageByID(id, (err, res) => {
+        if (!err) {
+          if (res.length) {
+            uploadImage(request, response, (error) => {
+              if (error) {
+                return responseStandard(response, error.message, {}, 400, false)
               } else {
-                return responseStandard(response, error.message, {}, 500, false)
+                const image = request.file
+
+                if (image) {
+                  const pathImage = `/uploads/${image.filename}`
+
+                  updateItemImageModel(pathImage, id, (error, result) => {
+                    if (!error) {
+                      if (result.affectedRows) {
+                        fs.unlinkSync(`assets/${res[0].url}`)
+                        return responseStandard(response, `Success update item image with ID ${id}!`, {})
+                      } else {
+                        return responseStandard(response, `Update failed! ID ${id} not found`, {}, 400, false)
+                      }
+                    } else {
+                      return responseStandard(response, error.message, {}, 500, false)
+                    }
+                  })
+                } else {
+                  return responseStandard(response, 'All field must be fill', {}, 400, false)
+                }
               }
             })
           } else {
-            return responseStandard(response, 'All field must be fill', {}, 400, false)
+            return responseStandard(response, 'No item image found', {}, 200, false)
           }
+        } else {
+          return responseStandard(response, err.message, {}, 500, false)
         }
       })
     } else {
