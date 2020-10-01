@@ -3,8 +3,8 @@ const { updateCostumerPartial, deleteCostumer, getDetailCostumer } = require('..
 
 const router = Router()
 
-router.get('/:id', getDetailCostumer)
-router.patch('/:id', updateCostumerPartial)
+router.get('/', getDetailCostumer)
+router.patch('/', updateCostumerPartial)
 router.delete('/:id', deleteCostumer)
 
 module.exports = router
