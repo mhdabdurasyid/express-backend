@@ -55,7 +55,7 @@ module.exports = {
     })
   },
   getItemsByColumn: (searchKey, searchValue, page, limit, sortColumn, sortOption, columnID, categoryID, cb) => {
-    db.query(`select name, price, store_name,
+    db.query(`select name, price, stock, store_name,
     (select url from item_images where item_id = ${table}.id limit 1) as img_thumbnail
     from ${table} join sellers on items.seller_id = sellers.id
     where ${columnID} = ${categoryID}
