@@ -3,7 +3,7 @@ const table = 'items'
 
 module.exports = {
   getDetailItemModel: (id, cb) => {
-    db.query(`select ${table}.id, ${table}.name, categories.name as category, price, colors.name as color, stock, conditions.name as conditions, description,
+    db.query(`select ${table}.id, ${table}.name, categories.name as category, store_name, price, colors.name as color, stock, conditions.name as conditions, description,
     (SELECT GROUP_CONCAT(url) FROM item_images where item_id = ${table}.id) as images, category_id
     from ${table} join categories on ${table}.category_id = categories.id 
     join conditions on ${table}.condition_id = conditions.id 
