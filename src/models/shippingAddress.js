@@ -5,14 +5,14 @@ module.exports = {
   addShippingAddressModel: (data, cb) => {
     const { addressName, address, recipientName, recipientPhone, city, postalCode, primaryAddress, costumerID } = data
 
-    db.query(`insert into ${table} (address_name, address, recipient_name, recipient_phone, city, postal_code, primary_address, costumer_id) 
+    db.query(`insert into ${table} (address_name, address, recipient_name, recipient_phone, city_id, postal_code, primary_address, costumer_id) 
     values ('${addressName.replace(/'/gi, "''")}', '${address.replace(/'/gi, "''")}', '${recipientName.replace(/'/gi, "''")}', '${recipientPhone}',
-    '${city.replace(/'/gi, "''")}', '${postalCode}', ${primaryAddress}, ${costumerID})`, (error, result, fields) => {
+    '${city}', '${postalCode}', ${primaryAddress}, ${costumerID})`, (error, result, fields) => {
       cb(error, result)
     })
   },
   getDetailShippingAddressModel: (id, cb) => {
-    db.query(`select recipient_name, recipient_phone, address_name, concat(address, ", ", cities.name, ", ", provinces.name, ", ", postal_code) as full_address, primary_address
+    db.query(`select ${table}.id, recipient_name, recipient_phone, address_name, concat(address, ", ", cities.name, ", ", provinces.name, ", ", postal_code) as full_address, primary_address
     from ${table} join cities on city_id = cities.id
     join provinces on province_id = provinces.id
     where costumer_id = '${id}'`, (error, result, fields) => {
