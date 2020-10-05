@@ -6,6 +6,7 @@ const { getCategories, getDetailCategory } = require('../controller/categories')
 const { getColors } = require('../controller/colors')
 const { getConditions } = require('../controller/conditions')
 const { getProvinces } = require('../controller/provinces')
+const { getCities } = require('../controller/cities')
 
 const router = Router()
 
@@ -18,5 +19,6 @@ router.get('/category/:id', getDetailCategory)
 router.get('/color', getColors)
 router.get('/condition', getConditions)
 router.get('/province', getProvinces)
+router.get('/city', getCities)
 
 module.exports = router
