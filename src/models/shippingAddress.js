@@ -12,8 +12,10 @@ module.exports = {
     })
   },
   getDetailShippingAddressModel: (id, cb) => {
-    db.query(`select recipient_name, recipient_phone, address_name, concat(address, ", ", city, ", ", postal_code) as full_address, primary_address
-    from ${table} where costumer_id = '${id}'`, (error, result, fields) => {
+    db.query(`select recipient_name, recipient_phone, address_name, concat(address, ", ", cities.name, ", ", provinces.name, ", ", postal_code) as full_address, primary_address
+    from ${table} join cities on city_id = cities.id
+    join provinces on province_id = provinces.id
+    where costumer_id = '${id}'`, (error, result, fields) => {
       cb(error, result)
     })
   },
