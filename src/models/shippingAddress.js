@@ -23,7 +23,7 @@ module.exports = {
     const { addressName, address, recipientName, recipientPhone, city, postalCode, primaryAddress } = data
 
     db.query(`update ${table} set address_name = '${addressName.replace(/'/gi, "''")}', address = '${address.replace(/'/gi, "''")}',
-    recipient_name = '${recipientName.replace(/'/gi, "''")}', recipient_phone = '${recipientPhone}', city = '${city.replace(/'/gi, "''")}',
+    recipient_name = '${recipientName.replace(/'/gi, "''")}', recipient_phone = '${recipientPhone}', city_id = '${city}',
     postal_code = '${postalCode}', primary_address = ${primaryAddress} where id = ${id}`, (error, result, fields) => {
       cb(error, result)
     })
