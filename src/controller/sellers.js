@@ -157,9 +157,9 @@ module.exports = {
               return responseStandard(response, error.message, {}, 400, false)
             } else {
               const image = request.file
-              const { email = '', password = '', store_name = '', phone = '', store_description = '' } = request.body
+              const { email = '', password = '', store_name = '', phone = '', store_description = '', city_id = '' } = request.body
 
-              if (email.trim() || password.trim() || store_name.trim() || phone.trim() || store_description.trim() || image) {
+              if (email.trim() || password.trim() || store_name.trim() || phone.trim() || store_description.trim() || city_id.trim() || image) {
                 const patchData = Object.entries(request.body).map(el => {
                   if (el[0] === 'password') {
                     const salt = bcrypt.genSaltSync(10)
