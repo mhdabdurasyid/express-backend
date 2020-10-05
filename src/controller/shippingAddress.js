@@ -1,4 +1,4 @@
-const { addShippingAddressModel, getDetailShippingAddressModel, updateShippingAddressModel, deleteShippingAddressModel } = require('../models/shippingAddress')
+const { addShippingAddressModel, getDetailShippingAddressModel, updateShippingAddressModel, deleteShippingAddressModel, getDetailShippingAddressByID } = require('../models/shippingAddress')
 const responseStandard = require('../helpers/responses')
 
 module.exports = {
@@ -87,5 +87,22 @@ module.exports = {
     } else {
       return responseStandard(response, 'Invalid or bad ID', {}, 400, false)
     }
+  },
+  getShippingAddressByID: (request, response) => {
+    const { id } = request.user
+    let { shippingAddressID } = request.params
+    shippingAddressID = Number(shippingAddressID)
+
+    getDetailShippingAddressByID(id, shippingAddressID, (error, result) => {
+      if (!error) {
+        if (result.length) {
+          return responseStandard(response, 'Found customer shipping addresses', { data: result })
+        } else {
+          return responseStandard(response, 'No data found', {}, 200, false)
+        }
+      } else {
+        return responseStandard(response, error.message, {}, 500, false)
+      }
+    })
   }
 }
