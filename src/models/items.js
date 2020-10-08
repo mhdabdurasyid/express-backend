@@ -45,7 +45,7 @@ module.exports = {
     })
   },
   getItemsModel: (searchKey, searchValue, page, limit, sortColumn, sortOption, cb) => {
-    db.query(`select items.id, items.name, price, description, stock, created_at, modified_at, categories.name as category, conditions.name as conditions, colors.name as color, store_name,
+    db.query(`select items.id, items.name, price, description, stock, created_at, modified_at, categories.name as category, conditions.name as conditions, colors.name as color, store_name, category_id,
     (select url from item_images where item_id = ${table}.id limit 1) as img_thumbnail,
     (select if(round(avg(star), 1), round(avg(star), 1), 0) from item_reviews where item_id = ${table}.id) as rating,
     (select count(star) from item_reviews where item_id = ${table}.id) as count_review
