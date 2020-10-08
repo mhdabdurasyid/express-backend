@@ -64,7 +64,7 @@ module.exports = {
     })
   },
   getItemsByColumn: (searchKey, searchValue, page, limit, sortColumn, sortOption, columnID, categoryID, cb) => {
-    db.query(`select name, price, stock, store_name,
+    db.query(`select ${table}.id, category_id, name, price, stock, store_name,
     (select url from item_images where item_id = ${table}.id limit 1) as img_thumbnail,
     (select if(round(avg(star), 1), round(avg(star), 1), 0) from item_reviews where item_id = ${table}.id) as rating,
     (select count(star) from item_reviews where item_id = ${table}.id) as count_review
