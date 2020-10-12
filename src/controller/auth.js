@@ -20,10 +20,10 @@ module.exports = {
               return responseStandard(response, 'Login success', { token })
             })
           } else {
-            return responseStandard(response, 'Wrong password', {}, 200, false)
+            return responseStandard(response, 'Wrong password', {}, 401, false)
           }
         } else {
-          return responseStandard(response, 'Wrong email', {}, 200, false)
+          return responseStandard(response, 'Wrong email', {}, 401, false)
         }
       } else {
         return responseStandard(response, error.message, {}, 500, false)
@@ -44,10 +44,10 @@ module.exports = {
               return responseStandard(response, 'Login success', { token })
             })
           } else {
-            return responseStandard(response, 'Wrong password', {}, 200, false)
+            return responseStandard(response, 'Wrong password', {}, 401, false)
           }
         } else {
-          return responseStandard(response, 'Wrong email', {}, 200, false)
+          return responseStandard(response, 'Wrong email', {}, 401, false)
         }
       } else {
         return responseStandard(response, error.message, {}, 500, false)
