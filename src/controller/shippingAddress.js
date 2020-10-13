@@ -1,4 +1,4 @@
-const { addShippingAddressModel, getDetailShippingAddressModel, updateShippingAddressModel, deleteShippingAddressModel, getDetailShippingAddressByID } = require('../models/shippingAddress')
+const { addShippingAddressModel, getDetailShippingAddressModel, updateShippingAddressModel, deleteShippingAddressModel, getDetailShippingAddressByID, getPrimaryAddress } = require('../models/shippingAddress')
 const responseStandard = require('../helpers/responses')
 
 module.exports = {
@@ -97,6 +97,21 @@ module.exports = {
       if (!error) {
         if (result.length) {
           return responseStandard(response, 'Found customer shipping addresses', { data: result })
+        } else {
+          return responseStandard(response, 'No data found', {}, 200, false)
+        }
+      } else {
+        return responseStandard(response, error.message, {}, 500, false)
+      }
+    })
+  },
+  getPrimaryAddress: (request, response) => {
+    const { id } = request.user
+
+    getPrimaryAddress(id, (error, result) => {
+      if (!error) {
+        if (result.length) {
+          return responseStandard(response, 'Found customer primary shipping addresses', { data: result })
         } else {
           return responseStandard(response, 'No data found', {}, 200, false)
         }

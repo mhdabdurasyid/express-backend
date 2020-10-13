@@ -12,7 +12,7 @@ module.exports = {
     })
   },
   getDetailShippingAddressModel: (id, cb) => {
-    db.query(`select ${table}.id, recipient_name, recipient_phone, address_name, concat(address, ", ", cities.name, ", ", provinces.name, ", ", postal_code) as full_address, primary_address
+    db.query(`select ${table}.id, recipient_name, recipient_phone, address_name, concat(address, ", ", cities.name, ", ", provinces.name, ", ", postal_code) as full_address, primary_address, cities.id as city_id
     from ${table} join cities on city_id = cities.id
     join provinces on province_id = provinces.id
     where costumer_id = '${id}'`, (error, result, fields) => {
@@ -34,10 +34,18 @@ module.exports = {
     })
   },
   getDetailShippingAddressByID: (costumerID, id, cb) => {
-    db.query(`select ${table}.id, recipient_name, recipient_phone, address_name, concat(address, ", ", cities.name, ", ", provinces.name, ", ", postal_code) as full_address, primary_address
+    db.query(`select ${table}.id, recipient_name, recipient_phone, address_name, concat(address, ", ", cities.name, ", ", provinces.name, ", ", postal_code) as full_address, primary_address, cities.id as city_id
     from ${table} join cities on city_id = cities.id
     join provinces on province_id = provinces.id
     where costumer_id = ${costumerID} and ${table}.id = ${id}`, (error, result, fields) => {
+      cb(error, result)
+    })
+  },
+  getPrimaryAddress: (id, cb) => {
+    db.query(`select ${table}.id, recipient_name, recipient_phone, address_name, concat(address, ", ", cities.name, ", ", provinces.name, ", ", postal_code) as full_address, primary_address, cities.id as city_id
+    from ${table} join cities on city_id = cities.id
+    join provinces on province_id = provinces.id
+    where costumer_id = '${id}' and primary_address = 1`, (error, result, fields) => {
       cb(error, result)
     })
   }
