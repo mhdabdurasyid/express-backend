@@ -1,3 +1,4 @@
+require('dotenv').config()
 const qs = require('querystring')
 const { addSellerModel, getSellersModel, countSellersModel, updateSellerModel, updateSellerPartialModel, deleteSellerModel, getDetailSellerModel } = require('../models/sellers')
 const { getItemsByColumn, countItemsByColumn } = require('../models/items')
@@ -80,11 +81,11 @@ module.exports = {
               const { pages, currentPage } = pageInfo
 
               if (currentPage < pages) {
-                pageInfo.nextLink = `http://localhost:8080/seller?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                pageInfo.nextLink = `${process.env.BASE_URL}/seller?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
               }
 
               if (currentPage > 1) {
-                pageInfo.prevLink = `http://localhost:8080/seller?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                pageInfo.prevLink = `${process.env.BASE_URL}/seller?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
               }
 
               return responseStandard(response, 'List of sellers', {
@@ -284,11 +285,11 @@ module.exports = {
                     const { pages, currentPage } = pageInfo
 
                     if (currentPage < pages) {
-                      pageInfo.nextLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                      pageInfo.nextLink = `${process.env.BASE_URL}/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
                     }
 
                     if (currentPage > 1) {
-                      pageInfo.prevLink = `http://localhost:8080/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                      pageInfo.prevLink = `${process.env.BASE_URL}/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
                     }
 
                     return responseStandard(response, 'Found a seller', {

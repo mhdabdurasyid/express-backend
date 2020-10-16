@@ -1,3 +1,4 @@
+require('dotenv').config()
 const qs = require('querystring')
 const { getDetailItemModel, addItemModel, updateItemModel, updatePartiallyItemModel, deleteItemModel, getItemsModel, countItemsModel } = require('../models/items')
 const responseStandard = require('../helpers/responses')
@@ -82,11 +83,11 @@ module.exports = {
               const { pages, currentPage } = pageInfo
 
               if (currentPage < pages) {
-                pageInfo.nextLink = `http://localhost:8080/item?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                pageInfo.nextLink = `${process.env.BASE_URL}/item?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
               }
 
               if (currentPage > 1) {
-                pageInfo.prevLink = `http://localhost:8080/item?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                pageInfo.prevLink = `${process.env.BASE_URL}/item?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
               }
 
               return responseStandard(response, 'List of items', {

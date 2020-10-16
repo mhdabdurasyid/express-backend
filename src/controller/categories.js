@@ -1,3 +1,4 @@
+require('dotenv').config()
 const qs = require('querystring')
 const { addCategoryModel, getCategoriesModel, updateCategoryModel, deleteCategoryModel, getDetailCategoryModel } = require('../models/categories')
 const { getItemsByColumn, countItemsByColumn } = require('../models/items')
@@ -172,11 +173,11 @@ module.exports = {
                       const { pages, currentPage } = pageInfo
 
                       if (currentPage < pages) {
-                        pageInfo.nextLink = `http://localhost:8080/category/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                        pageInfo.nextLink = `${process.env.BASE_URL}/category/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
                       }
 
                       if (currentPage > 1) {
-                        pageInfo.prevLink = `http://localhost:8080/category/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                        pageInfo.prevLink = `${process.env.BASE_URL}/category/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
                       }
 
                       return responseStandard(response, 'Found a category', {
