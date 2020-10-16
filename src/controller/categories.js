@@ -173,11 +173,11 @@ module.exports = {
                       const { pages, currentPage } = pageInfo
 
                       if (currentPage < pages) {
-                        pageInfo.nextLink = `${process.env.BASE_URL}/category/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                        pageInfo.nextLink = `${process.env.BASE_URL}/public/category/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
                       }
 
                       if (currentPage > 1) {
-                        pageInfo.prevLink = `${process.env.BASE_URL}/category/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                        pageInfo.prevLink = `${process.env.BASE_URL}/public/category/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
                       }
 
                       return responseStandard(response, 'Found a category', {

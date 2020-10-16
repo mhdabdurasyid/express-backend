@@ -83,11 +83,11 @@ module.exports = {
               const { pages, currentPage } = pageInfo
 
               if (currentPage < pages) {
-                pageInfo.nextLink = `${process.env.BASE_URL}/item?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                pageInfo.nextLink = `${process.env.BASE_URL}/public/item?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
               }
 
               if (currentPage > 1) {
-                pageInfo.prevLink = `${process.env.BASE_URL}/item?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                pageInfo.prevLink = `${process.env.BASE_URL}/public/item?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
               }
 
               return responseStandard(response, 'List of items', {

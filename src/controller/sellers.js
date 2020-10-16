@@ -285,11 +285,11 @@ module.exports = {
                     const { pages, currentPage } = pageInfo
 
                     if (currentPage < pages) {
-                      pageInfo.nextLink = `${process.env.BASE_URL}/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
+                      pageInfo.nextLink = `${process.env.BASE_URL}/seller/item?${qs.stringify({ ...request.query, ...{ page: page + 1 } })}`
                     }
 
                     if (currentPage > 1) {
-                      pageInfo.prevLink = `${process.env.BASE_URL}/seller/${id}?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
+                      pageInfo.prevLink = `${process.env.BASE_URL}/seller/item?${qs.stringify({ ...request.query, ...{ page: page - 1 } })}`
                     }
 
                     return responseStandard(response, 'Found a seller', {
