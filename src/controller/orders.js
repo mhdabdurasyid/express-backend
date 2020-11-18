@@ -37,7 +37,7 @@ module.exports = {
       return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
   },
-  getDetailCart: (request, response) => {
+  getOrder: (request, response) => {
     const { id } = request.user
 
     getOrderModel(id, (error, result) => {

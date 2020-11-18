@@ -1,9 +1,9 @@
 const { Router } = require('express')
-const { postOrder, postOrderDetail, getDetailCart } = require('../controller/orders')
+const { postOrder, postOrderDetail, getOrder } = require('../controller/orders')
 
 const router = Router()
 
-router.get('/', getDetailCart)
+router.get('/', getOrder)
 router.post('/', postOrder)
 router.post('/detail', postOrderDetail)
 
