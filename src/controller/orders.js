@@ -1,4 +1,4 @@
-const { postOrderModel, postOrderDetailModel, getOrderModel } = require('../models/orders')
+const { postOrderModel, postOrderDetailModel, getOrderModel, getOrderDetailModel } = require('../models/orders')
 const responseStandard = require('../helpers/responses')
 
 module.exports = {
@@ -44,6 +44,21 @@ module.exports = {
       if (!error) {
         if (result.length) {
           return responseStandard(response, 'Found costumer orders', { data: result })
+        } else {
+          return responseStandard(response, 'No data found', {}, 404, false)
+        }
+      } else {
+        return responseStandard(response, error.message, {}, 500, false)
+      }
+    })
+  },
+  getOrderDetail: (request, response) => {
+    const { id } = request.params
+
+    getOrderDetailModel(id, (error, result) => {
+      if (!error) {
+        if (result.length) {
+          return responseStandard(response, 'Found costumer order detail', { data: result })
         } else {
           return responseStandard(response, 'No data found', {}, 404, false)
         }
