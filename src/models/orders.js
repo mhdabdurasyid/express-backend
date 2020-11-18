@@ -17,5 +17,13 @@ module.exports = {
     values (${orderId}, '${name}', ${quantity}, ${totalPrice}, ${itemId}, ${sellerId})`, (error, result, fields) => {
       cb(error, result)
     })
+  },
+  getOrderModel: (costumerId, cb) => {
+    db.query(`SELECT ${table}.id, created_at, total_price, shipping_address, name as status, 
+    (SELECT count(id) FROM order_details where order_id=${table}.id) as quantity 
+    FROM ${table} JOIN order_status ON order_status=order_status.id
+    where costumer_id=${costumerId}`, (error, result, fields) => {
+      cb(error, result)
+    })
   }
 }

@@ -1,4 +1,4 @@
-const { postOrderModel, postOrderDetailModel } = require('../models/orders')
+const { postOrderModel, postOrderDetailModel, getOrderModel } = require('../models/orders')
 const responseStandard = require('../helpers/responses')
 
 module.exports = {
@@ -36,5 +36,20 @@ module.exports = {
     } else {
       return responseStandard(response, 'All field must be fill', {}, 400, false)
     }
+  },
+  getDetailCart: (request, response) => {
+    const { id } = request.user
+
+    getOrderModel(id, (error, result) => {
+      if (!error) {
+        if (result.length) {
+          return responseStandard(response, 'Found costumer orders', { data: result })
+        } else {
+          return responseStandard(response, 'No data found', {}, 404, false)
+        }
+      } else {
+        return responseStandard(response, error.message, {}, 500, false)
+      }
+    })
   }
 }
