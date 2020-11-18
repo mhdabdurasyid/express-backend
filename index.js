@@ -12,6 +12,7 @@ const authRouter = require('./src/routes/auth')
 const publicRouter = require('./src/routes/public')
 const itemImagesRouter = require('./src/routes/itemImages')
 const shippingAddressRouter = require('./src/routes/shippingAddress')
+const ordersRouter = require('./src/routes/orders')
 
 // enable CORS
 const cors = require('cors')
@@ -38,6 +39,7 @@ app.use('/costumer', authMidlleware, costumersRouter)
 app.use('/cart', authMidlleware, cartsRouter)
 app.use('/item_image', authMidlleware, itemImagesRouter)
 app.use('/shipping_address', authMidlleware, shippingAddressRouter)
+app.use('/order', authMidlleware, ordersRouter)
 
 app.use('/auth', authRouter)
 app.use('/public', publicRouter)
