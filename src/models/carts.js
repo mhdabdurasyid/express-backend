@@ -10,7 +10,7 @@ module.exports = {
     })
   },
   getDetailCartModel: (costumerID, cb) => {
-    db.query(`select item_id, items.name, store_name, price, quantity, city_id,
+    db.query(`select item_id, items.name, store_name, sellers.id as seller_id, price, quantity, city_id,
     (select url from item_images where item_id = items.id limit 1) as img_thumbnail
     from ${table} join costumers on ${table}.costumer_id = costumers.id 
     join items on ${table}.item_id = items.id 
